@@ -134,6 +134,7 @@ class PokerPage extends StatefulWidget {
 
 class _PokerPageState extends State<PokerPage> {
   final List<Card> _heroCards = [];
+  final List<Card> _villainCards = [];
   Suit? _selectedSuit;
   Rank? _selectedRank;
 
@@ -148,25 +149,42 @@ class _PokerPageState extends State<PokerPage> {
     });
   }
 
-  void _addCard() {
+  void _onVillainCardTapped(Card card) {
+    setState(() {
+      _villainCards.remove(card);
+    });
+  }
+
+  void _addCard(List<Card> hand) {
     if (_selectedSuit == null || _selectedRank == null) return;
 
     final newCard = Card(suit: _selectedSuit!, rank: _selectedRank!);
-    if (_heroCards.length < 2 && !_heroCards.contains(newCard)) {
+
+    // A card cannot be in play more than once.
+    final isCardDealt =
+        _heroCards.contains(newCard) || _villainCards.contains(newCard);
+
+    if (hand.length < 2 && !isCardDealt) {
       setState(() {
-        _heroCards.add(newCard);
+        hand.add(newCard);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool canAddCard = _selectedSuit != null &&
-        _selectedRank != null &&
-        _heroCards.length < 2 &&
-        (_heroCards.isEmpty ||
-            !_heroCards
-                .contains(Card(suit: _selectedSuit!, rank: _selectedRank!)));
+    final selectedCard = (_selectedSuit != null && _selectedRank != null)
+        ? Card(suit: _selectedSuit!, rank: _selectedRank!)
+        : null;
+
+    final isCardDealt = selectedCard != null &&
+        (_heroCards.contains(selectedCard) ||
+            _villainCards.contains(selectedCard));
+
+    final canAddHeroCard =
+        selectedCard != null && !isCardDealt && _heroCards.length < 2;
+    final canAddVillainCard =
+        selectedCard != null && !isCardDealt && _villainCards.length < 2;
 
     return Scaffold(
       appBar: AppBar(
@@ -195,6 +213,39 @@ class _PokerPageState extends State<PokerPage> {
                         : _heroCards
                             .map((card) => GestureDetector(
                                   onTap: () => _onHeroCardTapped(card),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: SizedBox(
+                                        width: 65, child: CardWidget(card: card)),
+                                  ),
+                                ))
+                            .toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+            child: Column(
+              children: [
+                const Text('Villain Cards',
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 90, // Provide a fixed height for the hero cards area
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: _villainCards.isEmpty
+                        ? [
+                            const Text(
+                                'Select 2 cards using the dropdowns below')
+                          ]
+                        : _villainCards
+                            .map((card) => GestureDetector(
+                                  onTap: () => _onVillainCardTapped(card),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 4.0),
@@ -256,9 +307,21 @@ class _PokerPageState extends State<PokerPage> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: canAddCard ? _addCard : null,
-                  child: const Text('Add Card'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed:
+                          canAddHeroCard ? () => _addCard(_heroCards) : null,
+                      child: const Text('Add to Hero'),
+                    ),
+                    ElevatedButton(
+                      onPressed: canAddVillainCard
+                          ? () => _addCard(_villainCards)
+                          : null,
+                      child: const Text('Add to Villain'),
+                    ),
+                  ],
                 ),
               ],
             ),

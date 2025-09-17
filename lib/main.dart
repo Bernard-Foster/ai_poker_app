@@ -1,4 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+const String baseUrl = 'http://10.95.86.60:8000';
 
 void main() {
   runApp(const MyApp());
@@ -40,6 +44,17 @@ class Card {
       case Suit.spades: return '♠';
     }
   }
+
+  String get serverSuitString {
+    switch (suit) {
+      case Suit.hearts: return 'h';
+      case Suit.diamonds: return 'd';
+      case Suit.clubs: return 'c';
+      case Suit.spades: return 's';
+    }
+  }
+
+  String toServerString() => '$rankString$serverSuitString';
 
   Color get suitColor {
     switch (suit) {
@@ -137,6 +152,9 @@ class _PokerPageState extends State<PokerPage> {
   final List<Card> _villainCards = [];
   Suit? _selectedSuit;
   Rank? _selectedRank;
+  double? _heroEquity;
+  double? _villainEquity;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -146,12 +164,14 @@ class _PokerPageState extends State<PokerPage> {
   void _onHeroCardTapped(Card card) {
     setState(() {
       _heroCards.remove(card);
+      _resetEquity();
     });
   }
 
   void _onVillainCardTapped(Card card) {
     setState(() {
       _villainCards.remove(card);
+      _resetEquity();
     });
   }
 
@@ -167,7 +187,67 @@ class _PokerPageState extends State<PokerPage> {
     if (hand.length < 2 && !isCardDealt) {
       setState(() {
         hand.add(newCard);
+        _resetEquity();
       });
+    }
+  }
+
+  void _resetEquity() {
+    if (_heroEquity != null || _villainEquity != null) {
+      setState(() {
+        _heroEquity = null;
+        _villainEquity = null;
+      });
+    }
+  }
+
+  Future<void> _calculateEquity() async {
+    if (_heroCards.length != 2 || _villainCards.length != 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Please select 2 cards for Hero and Villain.')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final heroHandString = _heroCards.map((c) => c.toServerString()).join();
+    final villainHandString =
+        _villainCards.map((c) => c.toServerString()).join();
+
+    // NOTE: Replace with your server's IP. 10.0.2.2 is for the Android emulator
+    // to connect to the host machine's localhost. For a physical device, use
+    // your computer's local network IP.
+    final url = Uri.parse('$baseUrl/equity/preflop');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'hands': [heroHandString, villainHandString],
+          'board': "", // Preflop, so board is empty
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final equities = data['equities'] as List;
+        setState(() {
+          _heroEquity = equities[0].toDouble();
+          _villainEquity = equities[1].toDouble();
+        });
+      } else {
+        final error = jsonDecode(response.body)['error'] ?? 'Unknown error';
+        print('Server Error: $error');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Server Error: $error')));
+      }
+    } catch (e) {
+      print('Network Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Network Error: $e')));
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -185,6 +265,8 @@ class _PokerPageState extends State<PokerPage> {
         selectedCard != null && !isCardDealt && _heroCards.length < 2;
     final canAddVillainCard =
         selectedCard != null && !isCardDealt && _villainCards.length < 2;
+    final canCalculate =
+        _heroCards.length == 2 && _villainCards.length == 2 && !_isLoading;
 
     return Scaffold(
       appBar: AppBar(
@@ -197,9 +279,21 @@ class _PokerPageState extends State<PokerPage> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                const Text('Hero Cards',
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Hero Cards',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    if (_heroEquity != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text('(${( _heroEquity! * 100).toStringAsFixed(1)}%)',
+                            style: const TextStyle(
+                                fontSize: 18, color: Colors.green, fontWeight: FontWeight.bold)),
+                      ),
+                  ],
+                ),
                 const SizedBox(height: 8),
                 SizedBox(
                   height: 90, // Provide a fixed height for the hero cards area
@@ -230,9 +324,21 @@ class _PokerPageState extends State<PokerPage> {
             padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
             child: Column(
               children: [
-                const Text('Villain Cards',
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Villain Cards',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    if (_villainEquity != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text('(${( _villainEquity! * 100).toStringAsFixed(1)}%)',
+                            style: const TextStyle(
+                                fontSize: 18, color: Colors.green, fontWeight: FontWeight.bold)),
+                      ),
+                  ],
+                ),
                 const SizedBox(height: 8),
                 SizedBox(
                   height: 90, // Provide a fixed height for the hero cards area
@@ -322,6 +428,16 @@ class _PokerPageState extends State<PokerPage> {
                       child: const Text('Add to Villain'),
                     ),
                   ],
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: canCalculate ? _calculateEquity : null,
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(200, 40),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 3,))
+                      : const Text('Calculate Equity'),
                 ),
               ],
             ),

@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-const String baseUrl = 'http://10.95.86.60:8000';
+// NOTE: Replace with your server's IP.
+// - Use http://10.0.2.2:8000 for the Android emulator.
+// - Use your computer's local network IP for a physical device.
+// - Use http://127.0.0.1:8000 for an iOS simulator or desktop/web app.
+const String baseUrl = 'http://127.0.0.1:8080'; // Server runs on 8080
 
 void main() {
   runApp(const MyApp());
@@ -216,6 +219,14 @@ class _PokerPageState extends State<PokerPage> {
     final villainHandString =
         _villainCards.map((c) => c.toServerString()).join();
 
+    final requestBody = {
+      'hands': [heroHandString, villainHandString],
+      // The /equity/preflop endpoint doesn't use a board, so we can omit it.
+    };
+
+    // Log the data being sent to the server
+    print('Sending to server: ${jsonEncode(requestBody)}');
+
     // NOTE: Replace with your server's IP. 10.0.2.2 is for the Android emulator
     // to connect to the host machine's localhost. For a physical device, use
     // your computer's local network IP.
@@ -225,18 +236,15 @@ class _PokerPageState extends State<PokerPage> {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'hands': [heroHandString, villainHandString],
-          'board': "", // Preflop, so board is empty
-        }),
+        body: jsonEncode(requestBody),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final equities = data['equities'] as List;
+        final result = data['result'];
         setState(() {
-          _heroEquity = equities[0].toDouble();
-          _villainEquity = equities[1].toDouble();
+          _heroEquity = result['hero_equity']?.toDouble();
+          _villainEquity = result['villain_equity']?.toDouble();
         });
       } else {
         final error = jsonDecode(response.body)['error'] ?? 'Unknown error';

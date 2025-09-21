@@ -16,7 +16,7 @@ except Exception as e:
 
 
 app = Flask(__name__)
-CORS(app) # Add this line to enable CORS for all routes
+CORS(app) # Add this line to enable CORS for all routes 
 
 # ------------------------------
 # Utilities
@@ -226,6 +226,7 @@ def api_equity_preflop():
     }
     """
     try:
+        print(f"Received request data: {request.json}") # Add this line
         data = request.get_json(force=True) or {}
         hero = data["hands"][0]
         villain = data["hands"][1]
@@ -281,4 +282,4 @@ def healthz():
 
 if __name__ == "__main__":
     # Default run (no debug in production)
-    app.run(host="0.0.0.0", port=8000, debug=False)
+    app.run(host="0.0.0.0", port=8080, debug=False)

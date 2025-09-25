@@ -13,6 +13,8 @@ void main() {
 
 enum Suit { hearts, diamonds, clubs, spades }
 
+enum Street { preflop, flop, turn, river }
+
 enum Rank { two, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ace }
 
 class Card {
@@ -153,6 +155,8 @@ class PokerPage extends StatefulWidget {
 class _PokerPageState extends State<PokerPage> {
   final List<Card> _heroCards = [];
   final List<Card> _villainCards = [];
+  final List<Card> _communityCards = [];
+  Street _selectedStreet = Street.preflop;
   Suit? _selectedSuit;
   Rank? _selectedRank;
   double? _heroEquity;
@@ -178,18 +182,26 @@ class _PokerPageState extends State<PokerPage> {
     });
   }
 
-  void _addCard(List<Card> hand) {
+  void _onBoardCardTapped(Card card) {
+    setState(() {
+      _communityCards.remove(card);
+      _resetEquity();
+    });
+  }
+
+  void _addCard(List<Card> cardList, int limit) {
     if (_selectedSuit == null || _selectedRank == null) return;
 
     final newCard = Card(suit: _selectedSuit!, rank: _selectedRank!);
 
     // A card cannot be in play more than once.
-    final isCardDealt =
-        _heroCards.contains(newCard) || _villainCards.contains(newCard);
+    final isCardDealt = _heroCards.contains(newCard) ||
+        _villainCards.contains(newCard) ||
+        _communityCards.contains(newCard);
 
-    if (hand.length < 2 && !isCardDealt) {
+    if (cardList.length < limit && !isCardDealt) {
       setState(() {
-        hand.add(newCard);
+        cardList.add(newCard);
         _resetEquity();
       });
     }
@@ -204,6 +216,19 @@ class _PokerPageState extends State<PokerPage> {
     }
   }
 
+  int get _boardCardLimit {
+    switch (_selectedStreet) {
+      case Street.preflop:
+        return 0;
+      case Street.flop:
+        return 3;
+      case Street.turn:
+        return 4;
+      case Street.river:
+        return 5;
+    }
+  }
+
   Future<void> _calculateEquity() async {
     if (_heroCards.length != 2 || _villainCards.length != 2) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -213,24 +238,40 @@ class _PokerPageState extends State<PokerPage> {
       return;
     }
 
+    if (_communityCards.length != _boardCardLimit) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Please select ${_boardCardLimit} cards for the ${_selectedStreet.name} board.')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     final heroHandString = _heroCards.map((c) => c.toServerString()).join();
     final villainHandString =
         _villainCards.map((c) => c.toServerString()).join();
+    final boardString = _communityCards.map((c) => c.toServerString()).join();
 
-    final requestBody = {
-      'hands': [heroHandString, villainHandString],
-      // The /equity/preflop endpoint doesn't use a board, so we can omit it.
-    };
+    late final Uri url;
+    late final Map<String, dynamic> requestBody;
+
+    if (_selectedStreet == Street.preflop) {
+      url = Uri.parse('$baseUrl/equity/preflop');
+      requestBody = {'hands': [heroHandString, villainHandString]};
+    } else {
+      url = Uri.parse('$baseUrl/equity/street');
+      requestBody = {
+        'street': _selectedStreet.name,
+        'hero': heroHandString,
+        'villain': villainHandString,
+        'board': boardString,
+      };
+    }
 
     // Log the data being sent to the server
     print('Sending to server: ${jsonEncode(requestBody)}');
-
-    // NOTE: Replace with your server's IP. 10.0.2.2 is for the Android emulator
-    // to connect to the host machine's localhost. For a physical device, use
-    // your computer's local network IP.
-    final url = Uri.parse('$baseUrl/equity/preflop');
 
     try {
       final response = await http.post(
@@ -267,12 +308,16 @@ class _PokerPageState extends State<PokerPage> {
 
     final isCardDealt = selectedCard != null &&
         (_heroCards.contains(selectedCard) ||
-            _villainCards.contains(selectedCard));
+            _villainCards.contains(selectedCard) ||
+            _communityCards.contains(selectedCard));
 
     final canAddHeroCard =
         selectedCard != null && !isCardDealt && _heroCards.length < 2;
     final canAddVillainCard =
         selectedCard != null && !isCardDealt && _villainCards.length < 2;
+    final canAddBoardCard = selectedCard != null &&
+        !isCardDealt &&
+        _communityCards.length < _boardCardLimit;
     final canCalculate =
         _heroCards.length == 2 && _villainCards.length == 2 && !_isLoading;
 
@@ -281,7 +326,8 @@ class _PokerPageState extends State<PokerPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -378,6 +424,73 @@ class _PokerPageState extends State<PokerPage> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                const Text('Street',
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                ToggleButtons(
+                  onPressed: (int index) {
+                    setState(() {
+                      _selectedStreet = Street.values[index];
+                      // Remove cards from board if they are invalid for the new street
+                      if (_communityCards.length > _boardCardLimit) {
+                        _communityCards.removeRange(
+                            _boardCardLimit, _communityCards.length);
+                      }
+                      _resetEquity();
+                    });
+                  },
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  isSelected: Street.values.map((s) => s == _selectedStreet).toList(),
+                  children: Street.values
+                      .map((s) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text(s.name[0].toUpperCase() + s.name.substring(1)),
+                          ))
+                      .toList(),
+                ),
+              ],
+            ),
+          ),
+          if (_selectedStreet != Street.preflop)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+              child: Column(
+                children: [
+                  const Text('Board Cards',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 90, // Provide a fixed height for the cards area
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: _communityCards.isEmpty
+                          ? [
+                              Text(
+                                  'Select $_boardCardLimit cards for the ${_selectedStreet.name}')
+                            ]
+                          : _communityCards
+                              .map((card) => GestureDetector(
+                                    onTap: () => _onBoardCardTapped(card),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: SizedBox(
+                                          width: 65, child: CardWidget(card: card)),
+                                    ),
+                                  ))
+                              .toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -425,15 +538,23 @@ class _PokerPageState extends State<PokerPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed:
-                          canAddHeroCard ? () => _addCard(_heroCards) : null,
+                      onPressed: canAddHeroCard
+                          ? () => _addCard(_heroCards, 2)
+                          : null,
                       child: const Text('Add to Hero'),
                     ),
                     ElevatedButton(
                       onPressed: canAddVillainCard
-                          ? () => _addCard(_villainCards)
+                          ? () => _addCard(_villainCards, 2)
                           : null,
                       child: const Text('Add to Villain'),
+                    ),
+                    if (_selectedStreet != Street.preflop)
+                      ElevatedButton(
+                        onPressed: canAddBoardCard
+                            ? () => _addCard(_communityCards, _boardCardLimit)
+                            : null,
+                        child: const Text('Add to Board'),
                     ),
                   ],
                 ),
@@ -451,6 +572,7 @@ class _PokerPageState extends State<PokerPage> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

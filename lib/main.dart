@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 // - Use http://10.0.2.2:8000 for the Android emulator.
 // - Use your computer's local network IP for a physical device.
 // - Use http://127.0.0.1:8000 for an iOS simulator or desktop/web app.
-const String baseUrl = 'http://127.0.0.1:8080'; // Server runs on 8080
+const String baseUrl = 'http://127.0.0.1:5001'; // pokerkit server runs on 5001
 
 void main() {
   runApp(const MyApp());
@@ -154,13 +154,13 @@ class PokerPage extends StatefulWidget {
 
 class _PokerPageState extends State<PokerPage> {
   final List<Card> _heroCards = [];
-  final List<Card> _villainCards = [];
+  final List<List<Card>> _villainHands = [[]]; // Start with one villain
   final List<Card> _communityCards = [];
   Street _selectedStreet = Street.preflop;
   Suit? _selectedSuit;
   Rank? _selectedRank;
   double? _heroEquity;
-  double? _villainEquity;
+  List<double?>? _villainEquities;
   bool _isLoading = false;
 
   @override
@@ -175,9 +175,9 @@ class _PokerPageState extends State<PokerPage> {
     });
   }
 
-  void _onVillainCardTapped(Card card) {
+  void _onVillainCardTapped(int villainIndex, Card card) {
     setState(() {
-      _villainCards.remove(card);
+      _villainHands[villainIndex].remove(card);
       _resetEquity();
     });
   }
@@ -196,7 +196,8 @@ class _PokerPageState extends State<PokerPage> {
 
     // A card cannot be in play more than once.
     final isCardDealt = _heroCards.contains(newCard) ||
-        _villainCards.contains(newCard) ||
+        _villainHands
+            .any((hand) => hand.contains(newCard)) ||
         _communityCards.contains(newCard);
 
     if (cardList.length < limit && !isCardDealt) {
@@ -208,10 +209,10 @@ class _PokerPageState extends State<PokerPage> {
   }
 
   void _resetEquity() {
-    if (_heroEquity != null || _villainEquity != null) {
+    if (_heroEquity != null || _villainEquities != null) {
       setState(() {
         _heroEquity = null;
-        _villainEquity = null;
+        _villainEquities = null;
       });
     }
   }
@@ -230,10 +231,12 @@ class _PokerPageState extends State<PokerPage> {
   }
 
   Future<void> _calculateEquity() async {
-    if (_heroCards.length != 2 || _villainCards.length != 2) {
+    final allHandsComplete = _heroCards.length == 2 &&
+        _villainHands.every((hand) => hand.length == 2);
+    if (!allHandsComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Please select 2 cards for Hero and Villain.')),
+            content: Text('Please select 2 cards for Hero and all Villains.')),
       );
       return;
     }
@@ -250,25 +253,18 @@ class _PokerPageState extends State<PokerPage> {
     setState(() => _isLoading = true);
 
     final heroHandString = _heroCards.map((c) => c.toServerString()).join();
-    final villainHandString =
-        _villainCards.map((c) => c.toServerString()).join();
+    final villainHandStrings = _villainHands
+        .map((hand) => hand.map((c) => c.toServerString()).join())
+        .toList();
     final boardString = _communityCards.map((c) => c.toServerString()).join();
 
-    late final Uri url;
-    late final Map<String, dynamic> requestBody;
+    final allHands = [heroHandString, ...villainHandStrings];
 
-    if (_selectedStreet == Street.preflop) {
-      url = Uri.parse('$baseUrl/equity/preflop');
-      requestBody = {'hands': [heroHandString, villainHandString]};
-    } else {
-      url = Uri.parse('$baseUrl/equity/street');
-      requestBody = {
-        'street': _selectedStreet.name,
-        'hero': heroHandString,
-        'villain': villainHandString,
-        'board': boardString,
-      };
-    }
+    final url = Uri.parse('$baseUrl/equity');
+    final requestBody = {
+      'players': allHands, // pokerkit server expects 'players'
+      'board': boardString,
+    };
 
     // Log the data being sent to the server
     print('Sending to server: ${jsonEncode(requestBody)}');
@@ -282,10 +278,15 @@ class _PokerPageState extends State<PokerPage> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final result = data['result'];
+        // Assuming response is like: {"equities": [0.6, 0.2, 0.2]}
+        final equities = (data['equities'] as List).cast<double>();
         setState(() {
-          _heroEquity = result['hero_equity']?.toDouble();
-          _villainEquity = result['villain_equity']?.toDouble();
+          if (equities.isNotEmpty) {
+            _heroEquity = equities[0];
+          }
+          if (equities.length > 1) {
+            _villainEquities = equities.sublist(1);
+          }
         });
       } else {
         final error = jsonDecode(response.body)['error'] ?? 'Unknown error';
@@ -308,18 +309,18 @@ class _PokerPageState extends State<PokerPage> {
 
     final isCardDealt = selectedCard != null &&
         (_heroCards.contains(selectedCard) ||
-            _villainCards.contains(selectedCard) ||
+            _villainHands.any((hand) => hand.contains(selectedCard)) ||
             _communityCards.contains(selectedCard));
 
     final canAddHeroCard =
         selectedCard != null && !isCardDealt && _heroCards.length < 2;
-    final canAddVillainCard =
-        selectedCard != null && !isCardDealt && _villainCards.length < 2;
     final canAddBoardCard = selectedCard != null &&
         !isCardDealt &&
         _communityCards.length < _boardCardLimit;
     final canCalculate =
-        _heroCards.length == 2 && _villainCards.length == 2 && !_isLoading;
+        _heroCards.length == 2 &&
+        _villainHands.isNotEmpty &&
+        _villainHands.every((h) => h.length == 2) && !_isLoading;
 
     return Scaffold(
       appBar: AppBar(
@@ -374,51 +375,59 @@ class _PokerPageState extends State<PokerPage> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Villain Cards',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                    if (_villainEquity != null)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text('(${( _villainEquity! * 100).toStringAsFixed(1)}%)',
-                            style: const TextStyle(
-                                fontSize: 18, color: Colors.green, fontWeight: FontWeight.bold)),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: 90, // Provide a fixed height for the hero cards area
-                  child: Row(
+          ..._villainHands.asMap().entries.map((entry) {
+            final index = entry.key;
+            final villainHand = entry.value;
+            final villainEquity = (_villainEquities != null && index < _villainEquities!.length)
+                ? _villainEquities![index]
+                : null;
+
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+              child: Column(
+                children: [
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: _villainCards.isEmpty
-                        ? [
-                            const Text(
-                                'Select 2 cards using the dropdowns below')
-                          ]
-                        : _villainCards
-                            .map((card) => GestureDetector(
-                                  onTap: () => _onVillainCardTapped(card),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    child: SizedBox(
-                                        width: 65, child: CardWidget(card: card)),
-                                  ),
-                                ))
-                            .toList(),
+                    children: [
+                      Text('Villain ${index + 1} Cards',
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      if (villainEquity != null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text('(${(villainEquity * 100).toStringAsFixed(1)}%)',
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.green, fontWeight: FontWeight.bold)),
+                        ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 90, // Provide a fixed height for the hero cards area
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: villainHand.isEmpty
+                          ? [
+                              const Text(
+                                  'Select 2 cards using the dropdowns below')
+                            ]
+                          : villainHand
+                              .map((card) => GestureDetector(
+                                    onTap: () => _onVillainCardTapped(index, card),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: SizedBox(
+                                          width: 65, child: CardWidget(card: card)),
+                                    ),
+                                  ))
+                              .toList(),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -543,18 +552,52 @@ class _PokerPageState extends State<PokerPage> {
                           : null,
                       child: const Text('Add to Hero'),
                     ),
-                    ElevatedButton(
-                      onPressed: canAddVillainCard
-                          ? () => _addCard(_villainCards, 2)
-                          : null,
-                      child: const Text('Add to Villain'),
-                    ),
+                    ..._villainHands.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final villainHand = entry.value;
+                      final canAddVillainCard = selectedCard != null &&
+                          !isCardDealt &&
+                          villainHand.length < 2;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ElevatedButton(
+                          onPressed: canAddVillainCard
+                              ? () => _addCard(_villainHands[index], 2)
+                              : null,
+                          child: Text('To V${index + 1}'),
+                        ),
+                      );
+                    }).toList(),
                     if (_selectedStreet != Street.preflop)
                       ElevatedButton(
                         onPressed: canAddBoardCard
                             ? () => _addCard(_communityCards, _boardCardLimit)
                             : null,
                         child: const Text('Add to Board'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _villainHands.length < 9 ? () {
+                        setState(() {
+                          _villainHands.add([]);
+                          _resetEquity();
+                        });
+                      } : null,
+                      child: const Text('Add Villain'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _villainHands.length > 1 ? () {
+                        setState(() {
+                          _villainHands.removeLast();
+                          _resetEquity();
+                        });
+                      } : null,
+                      child: const Text('Remove Villain'),
                     ),
                   ],
                 ),

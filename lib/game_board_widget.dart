@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 class GameBoardWidget extends StatelessWidget {
   final int playerCount;
   final String? gameId;
+  final int? buttonSeat;
 
   const GameBoardWidget({
     super.key,
     this.playerCount = 9,
     this.gameId,
+    this.buttonSeat = 1, // Default to seat 1
   });
 
   @override
@@ -54,6 +56,43 @@ class GameBoardWidget extends StatelessWidget {
           );
         });
 
+        // Generate dealer button widget if seat is specified
+        final List<Widget> dealerButton = [];
+        if (buttonSeat != null && buttonSeat! > 0 && buttonSeat! <= playerCount) {
+          // Calculate position for the button, similar to how seats are placed.
+          // We use `buttonSeat - 1` because seat numbers are 1-based, but our index is 0-based.
+          // We add a small offset to the angle to place it "to the right" of the seat.
+          final double angle = ((buttonSeat! - 1) / playerCount) * 2 * pi + (pi / 2) - (pi / playerCount);
+
+          // The ellipse radii for placing the button slightly inside the player seats
+          final double xRadius = tableWidth / 2 - seatRadius * 0.6; // Was 0.8, now 25% closer
+          final double yRadius = tableHeight / 2 - seatRadius * 0.6; // Was 0.8, now 25% closer
+
+          final double x = xRadius * cos(angle);
+          final double y = yRadius * sin(angle);
+
+          final double buttonRadius = seatRadius * 0.3; // 40% smaller than 0.5
+
+          dealerButton.add(
+            Positioned(
+              left: (totalWidth / 2) + x - buttonRadius,
+              top: (totalHeight / 2) + y - buttonRadius,
+              child: CircleAvatar(
+                radius: buttonRadius,
+                backgroundColor: Colors.white,
+                child: Text(
+                  'D',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: buttonRadius * 1.2,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
         return Center(
           child: Container(
             width: totalWidth,
@@ -87,6 +126,7 @@ class GameBoardWidget extends StatelessWidget {
                 ),
                 // The player seats overlaid on the table
                 ...playerSeats,
+                ...dealerButton,
               ],
             ),
           ),

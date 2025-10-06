@@ -89,8 +89,40 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
                   // For now, let's just display the info for the first hand.
                   final gameState = _parser?.parseHand(0);
                   return GameBoardWidget(
-                      gameId: gameState?.gameId);
+                      gameId: gameState?.gameId,
+                      buttonSeat: gameState?.buttonSeat);
                 }),
+                const Divider(height: 1),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: null, // Dummy button
+                        icon: const Icon(Icons.skip_previous),
+                        label: const Text('Last Hand'),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: null, // Dummy button
+                        icon: const Icon(Icons.fast_rewind),
+                        label: const Text('Prev Move'),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: null, // Dummy button
+                        icon: const Icon(Icons.fast_forward),
+                        label: const Text('Next Move'),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: null, // Dummy button
+                        icon: const Icon(Icons.skip_next),
+                        label: const Text('Next Hand'),
+                      ),
+                    ],
+                  ),
+                ),
                 const Divider(height: 1),
                 Expanded(
                   child: SingleChildScrollView(

@@ -178,13 +178,13 @@ class GameBoardWidget extends StatelessWidget {
             final double x = xRadius * cos(angle);
             final double y = yRadius * sin(angle);
 
-            final double betWidgetSize = seatRadius * 1.2;
+            final double betWidgetSize = seatRadius * 0.6; // Shrunk by 50%
 
             betWidgets.add(
               Positioned(
                 left: (totalWidth / 2) + x - (betWidgetSize / 2),
                 top: (totalHeight / 2) + y - (betWidgetSize / 2),
-                child: SizedBox(width: betWidgetSize, height: betWidgetSize * 1.2, child: ChipStackWidget(amount: bet.amount)),
+                child: SizedBox(width: betWidgetSize, height: betWidgetSize * 2.5, child: ChipStackWidget(amount: bet.amount, chipDiameter: betWidgetSize)),
               ),
             );
           }

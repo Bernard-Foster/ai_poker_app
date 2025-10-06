@@ -1,53 +1,69 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Chip;
+import 'package:poker_app/chip_widget.dart';
 
 class ChipStackWidget extends StatelessWidget {
   final int amount;
+  final double chipDiameter;
 
-  const ChipStackWidget({super.key, required this.amount});
+  const ChipStackWidget({super.key, required this.amount, this.chipDiameter = 50});
+
+  // Standard chip denominations
+  static const List<Chip> chipDenominations = [
+    Chip(value: 1000, color: Colors.orange, stripeColor: Colors.black),
+    Chip(value: 500, color: Colors.purple, stripeColor: Colors.white),
+    Chip(value: 100, color: Colors.black, stripeColor: Colors.white),
+    Chip(value: 25, color: Colors.green, stripeColor: Colors.white),
+    Chip(value: 5, color: Colors.red, stripeColor: Colors.white),
+    Chip(value: 1, color: Colors.white, stripeColor: Colors.blue),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // Simple representation of chips. A more complex version could show different chip values.
-    const chipHeight = 2.0;
-    const chipsInStack = 5;
-    final numChips = (amount / 25).clamp(1, 20).toInt(); // Example: 1 chip per 25 currency, max 20 chips
-    final numStacks = (numChips / chipsInStack).ceil();
+    final chipsToRender = _calculateChips(amount);
+    final double chipHeight = chipDiameter * 0.1; // Each chip is 10% of its diameter in height
+    // Calculate the total height needed for the stack.
+    // (number of overlaps * overlap_height) + one_full_chip_diameter
+    final double stackHeight = chipsToRender.isEmpty ? 0 : (chipsToRender.length - 1) * chipHeight + chipDiameter;
 
-    return LayoutBuilder(builder: (context, constraints) {
-      final chipRadius = constraints.maxWidth / 2.5;
-
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: chipRadius * 2,
-            width: chipRadius * 2,
-            child: Stack(
-              alignment: Alignment.center,
-              children: List.generate(numStacks, (i) {
-                return Positioned(
-                  left: i * chipRadius * 0.3, // Stagger the stacks
-                  child: SizedBox(
-                    height: chipRadius * 2,
-                    width: chipRadius * 2,
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: List.generate(chipsInStack, (j) {
-                        if (i * chipsInStack + j >= numChips) return const SizedBox.shrink();
-                        return Positioned(
-                          bottom: j * chipHeight,
-                          child: CircleAvatar(radius: chipRadius, backgroundColor: Colors.red.shade800),
-                        );
-                      }),
-                    ),
-                  ),
-                );
-              }),
-            ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: chipDiameter,
+          height: stackHeight,
+          child: Stack(
+            children: List.generate(chipsToRender.length, (index) {
+              final chip = chipsToRender[index];
+              return Positioned(
+                bottom: index * chipHeight,
+                child: ChipWidget(chip: chip, diameter: chipDiameter),
+              );
+            }),
           ),
-          Text(amount.toString(), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold, shadows: [Shadow(blurRadius: 2)])),
-        ],
-      );
-    });
+        ),
+        Text(amount.toString(), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold, shadows: [Shadow(blurRadius: 2)])),
+      ],
+    );
+  }
+
+  // Calculates the list of chips to represent the total amount.
+  List<Chip> _calculateChips(int totalAmount) {
+    List<Chip> chips = [];
+    int remainingAmount = totalAmount;
+
+    for (final denomination in chipDenominations) {
+      if (remainingAmount >= denomination.value) {
+        int count = remainingAmount ~/ denomination.value;
+        for (int i = 0; i < count; i++) {
+          chips.add(denomination);
+        }
+        remainingAmount %= denomination.value;
+      }
+    }
+    // To keep stack size reasonable, we can clamp it.
+    if (chips.length > 15) {
+      chips = chips.sublist(0, 15);
+    }
+    return chips.isEmpty && totalAmount > 0 ? [chipDenominations.last] : chips;
   }
 }

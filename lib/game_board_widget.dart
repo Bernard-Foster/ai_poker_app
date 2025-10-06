@@ -34,11 +34,13 @@ class GameBoardWidget extends StatelessWidget {
         // Generate player seat widgets
         final List<Widget> playerSeats = List.generate(playerCount, (index) {
           // Find the player for the current seat index. Seat numbers are 1-based.
-          final seatNumber = index + 1;
-          final player = players?.firstWhere(
-            (p) => p.seat == seatNumber,
-            orElse: () => Player(seat: 0, name: '', stack: 0), // Dummy player if not found
-          );
+          final seatNumber = index;
+          Player? player;
+          try {
+            player = players?.firstWhere((p) => p.seat == seatNumber);
+          } catch (e) {
+            player = null; // Player not found for this seat
+          }
           // Calculate position for each seat around an ellipse
           // We add pi/2 to start the first player at the bottom center
           final double angle = (index / playerCount) * 2 * pi + (pi / 2);
@@ -51,7 +53,7 @@ class GameBoardWidget extends StatelessWidget {
           final double y = yRadius * sin(angle);
 
           // If no player is at this seat, show a simple seat indicator.
-          if (player == null || player.seat == 0) {
+          if (player == null) {
             return Positioned(
               left: (totalWidth / 2) + x - seatRadius,
               top: (totalHeight / 2) + y - seatRadius,
@@ -120,10 +122,9 @@ class GameBoardWidget extends StatelessWidget {
         // Generate dealer button widget if seat is specified
         final List<Widget> dealerButton = [];
         if (buttonSeat != null && buttonSeat! > 0 && buttonSeat! <= playerCount) {
-          // Calculate position for the button, similar to how seats are placed.
-          // We use `buttonSeat - 1` because seat numbers are 1-based, but our index is 0-based.
+          // Calculate position for the button. `buttonSeat` is the 0-indexed seat number.
           // We add a small offset to the angle to place it "to the right" of the seat.
-          final double angle = ((buttonSeat! - 1) / playerCount) * 2 * pi + (pi / 2) - (pi / playerCount);
+          final double angle = (buttonSeat! / playerCount) * 2 * pi + (pi / 2) - (pi / playerCount);
 
           // The ellipse radii for placing the button slightly inside the player seats
           final double xRadius = tableWidth / 2 - seatRadius * 0.6; // Was 0.8, now 25% closer

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:poker_app/hand_history_page.dart';
 import 'package:http/http.dart' as http;
 // NOTE: Replace with your server's IP.
 // - Use http://10.0.2.2:8000 for the Android emulator.
@@ -91,11 +92,54 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Poker App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const PokerPage(title: 'Hero Card Selection'),
+      home: const HomeScreen(title: 'Poker App'),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const PokerPage(title: 'Hand Equity Calculator')),
+                );
+              },
+              child: const Text('Hand Equity Calculator'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HandHistoryPage(title: 'Hand History Playback')),
+                );
+              },
+              child: const Text('Hand History Playback'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -153,7 +197,11 @@ class PokerPage extends StatefulWidget {
 }
 
 class _PokerPageState extends State<PokerPage> {
-  final List<Card> _heroCards = [];
+  // State for Hero's hand: can be a range string like "AKs" or "77".
+  String? _heroHand;
+  Rank? _heroRank1;
+  Rank? _heroRank2;
+  bool _heroSuited = false;
   final List<List<Card>> _villainHands = [[]]; // Start with one villain
   final List<Card> _communityCards = [];
   Street _selectedStreet = Street.preflop;
@@ -166,13 +214,6 @@ class _PokerPageState extends State<PokerPage> {
   @override
   void initState() {
     super.initState();
-  }
-
-  void _onHeroCardTapped(Card card) {
-    setState(() {
-      _heroCards.remove(card);
-      _resetEquity();
-    });
   }
 
   void _onVillainCardTapped(int villainIndex, Card card) {
@@ -195,12 +236,11 @@ class _PokerPageState extends State<PokerPage> {
     final newCard = Card(suit: _selectedSuit!, rank: _selectedRank!);
 
     // A card cannot be in play more than once.
-    final isCardDealt = _heroCards.contains(newCard) ||
-        _villainHands
+    final isCardDealt = _villainHands
             .any((hand) => hand.contains(newCard)) ||
         _communityCards.contains(newCard);
 
-    if (cardList.length < limit && !isCardDealt) {
+    if (cardList.length < limit && !isCardDealt) { // Hero hand is now a range, not specific cards
       setState(() {
         cardList.add(newCard);
         _resetEquity();
@@ -231,12 +271,10 @@ class _PokerPageState extends State<PokerPage> {
   }
 
   Future<void> _calculateEquity() async {
-    final allHandsComplete = _heroCards.length == 2 &&
-        _villainHands.every((hand) => hand.length == 2);
+    final allHandsComplete = _heroHand != null && _heroHand!.isNotEmpty && _villainHands.every((hand) => hand.length == 2);
     if (!allHandsComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please select 2 cards for Hero and all Villains.')),
+        const SnackBar(content: Text('Please set a hand for Hero and select 2 cards for all Villains.')),
       );
       return;
     }
@@ -252,13 +290,12 @@ class _PokerPageState extends State<PokerPage> {
 
     setState(() => _isLoading = true);
 
-    final heroHandString = _heroCards.map((c) => c.toServerString()).join();
     final villainHandStrings = _villainHands
         .map((hand) => hand.map((c) => c.toServerString()).join())
         .toList();
     final boardString = _communityCards.map((c) => c.toServerString()).join();
 
-    final allHands = [heroHandString, ...villainHandStrings];
+    final allHands = [_heroHand!, ...villainHandStrings];
 
     final url = Uri.parse('$baseUrl/equity');
     final requestBody = {
@@ -308,18 +345,13 @@ class _PokerPageState extends State<PokerPage> {
         : null;
 
     final isCardDealt = selectedCard != null &&
-        (_heroCards.contains(selectedCard) ||
-            _villainHands.any((hand) => hand.contains(selectedCard)) ||
+        (_villainHands.any((hand) => hand.contains(selectedCard)) ||
             _communityCards.contains(selectedCard));
 
-    final canAddHeroCard =
-        selectedCard != null && !isCardDealt && _heroCards.length < 2;
     final canAddBoardCard = selectedCard != null &&
         !isCardDealt &&
         _communityCards.length < _boardCardLimit;
-    final canCalculate =
-        _heroCards.length == 2 &&
-        _villainHands.isNotEmpty &&
+    final canCalculate = _heroHand != null && _heroHand!.isNotEmpty && _villainHands.isNotEmpty &&
         _villainHands.every((h) => h.length == 2) && !_isLoading;
 
     return Scaffold(
@@ -352,29 +384,90 @@ class _PokerPageState extends State<PokerPage> {
                 const SizedBox(height: 8),
                 SizedBox(
                   height: 90, // Provide a fixed height for the hero cards area
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: _heroCards.isEmpty
-                        ? [
-                            const Text(
-                                'Select 2 cards using the dropdowns below')
-                          ]
-                        : _heroCards
-                            .map((card) => GestureDetector(
-                                  onTap: () => _onHeroCardTapped(card),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4.0),
-                                    child: SizedBox(
-                                        width: 65, child: CardWidget(card: card)),
-                                  ),
-                                ))
-                            .toList(),
+                  child: Center(
+                    child: _heroHand == null
+                        ? const Text('Select a hand range for Hero below')
+                        : Text(
+                            _heroHand!,
+                            style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue),
+                          ),
                   ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    DropdownButton<Rank>(
+                      hint: const Text('Rank 1'),
+                      value: _heroRank1,
+                      onChanged: (Rank? newValue) {
+                        setState(() => _heroRank1 = newValue);
+                      },
+                      items: Rank.values.reversed.map((Rank rank) {
+                        return DropdownMenuItem<Rank>(
+                          value: rank,
+                          child: Text(Card(suit: Suit.spades, rank: rank).rankString),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(width: 10),
+                    DropdownButton<Rank>(
+                      hint: const Text('Rank 2'),
+                      value: _heroRank2,
+                      onChanged: (Rank? newValue) {
+                        setState(() => _heroRank2 = newValue);
+                      },
+                      items: Rank.values.reversed.map((Rank rank) {
+                        return DropdownMenuItem<Rank>(
+                          value: rank,
+                          child: Text(Card(suit: Suit.spades, rank: rank).rankString),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(width: 10),
+                    if (_heroRank1 != null && _heroRank2 != null && _heroRank1 != _heroRank2) ...[
+                      const Text('Suited'),
+                      Switch(
+                        value: _heroSuited,
+                        onChanged: (value) {
+                          setState(() => _heroSuited = value);
+                        },
+                      ),
+                    ]
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_heroRank1 != null && _heroRank2 != null) {
+                      if (_heroRank1 == _heroRank2) {
+                        // Pocket pair
+                        final rankStr = Card(suit: Suit.spades, rank: _heroRank1!).rankString;
+                        setState(() => _heroHand = '$rankStr$rankStr');
+                      } else {
+                        // Ensure ranks are ordered correctly (high then low)
+                        final r1Index = Rank.values.indexOf(_heroRank1!);
+                        final r2Index = Rank.values.indexOf(_heroRank2!);
+                        final highRank = r1Index > r2Index ? _heroRank1! : _heroRank2!;
+                        final lowRank = r1Index > r2Index ? _heroRank2! : _heroRank1!;
+
+                        final highRankStr = Card(suit: Suit.spades, rank: highRank).rankString;
+                        final lowRankStr = Card(suit: Suit.spades, rank: lowRank).rankString;
+                        final suitedStr = _heroSuited ? 's' : 'o';
+
+                        setState(() => _heroHand = '$highRankStr$lowRankStr$suitedStr');
+                      }
+                      _resetEquity();
+                    }
+                  },
+                  child: const Text('Set Hero Hand'),
                 ),
               ],
             ),
           ),
+          const Divider(),
           ..._villainHands.asMap().entries.map((entry) {
             final index = entry.key;
             final villainHand = entry.value;
@@ -403,13 +496,13 @@ class _PokerPageState extends State<PokerPage> {
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
-                    height: 90, // Provide a fixed height for the hero cards area
+                    height: 90, // Provide a fixed height for the villain cards area
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: villainHand.isEmpty
                           ? [
                               const Text(
-                                  'Select 2 cards using the dropdowns below')
+                                  'Select 2 cards using the card selector below')
                             ]
                           : villainHand
                               .map((card) => GestureDetector(
@@ -500,6 +593,8 @@ class _PokerPageState extends State<PokerPage> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                const Text('Card Selector (for Villains & Board)', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -546,12 +641,6 @@ class _PokerPageState extends State<PokerPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                      onPressed: canAddHeroCard
-                          ? () => _addCard(_heroCards, 2)
-                          : null,
-                      child: const Text('Add to Hero'),
-                    ),
                     ..._villainHands.asMap().entries.map((entry) {
                       final index = entry.key;
                       final villainHand = entry.value;

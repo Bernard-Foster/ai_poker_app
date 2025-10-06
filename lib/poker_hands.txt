@@ -1,0 +1,1046 @@
+Game#: 28884650
+LaRayne folds [100 Tournament chips]
+LuckySteve57 folds [100 Tournament chips]
+MandyMom calls [50 Tournament chips]
+upcreek58 folds
+round 1 is over.
+Hand evaluation for MandyMom (Ah Qh: ace high)
+MandyMom wins main pot 200 Tournament chips.
+Seat 0: PokRpro (1780 Tournament chips) 
+Seat 2: juggy88 (3766 Tournament chips) 
+Seat 3: LaRayne (1410 Tournament chips) 
+Seat 4: LuckySteve57 (525 Tournament chips) 
+Seat 5: MandyMom (762 Tournament chips) 
+Seat 6: upcreek58 (750 Tournament chips) 
+Seat 7: socal pilot (90 Tournament chips) 
+Seat 8: HAMMERMAN44 (2368 Tournament chips) 
+Game #28884650-19 ends
+Game #28884650-20 starts
+Seat 0: PokRpro (1780 Tournament chips) 
+Seat 2: juggy88 (3766 Tournament chips) 
+Seat 3: LaRayne (1410 Tournament chips) 
+Seat 4: LuckySteve57 (525 Tournament chips) 
+Seat 5: MandyMom (762 Tournament chips) 
+Seat 6: upcreek58 (750 Tournament chips) 
+Seat 7: socal pilot (90 Tournament chips) 
+Seat 8: HAMMERMAN44 (2368 Tournament chips) 
+The button is at seat 4
+The button is moved to seat 5.
+upcreek58 posts the small blind [50 Tournament chips]
+socal pilot posts the big blind [90 Tournament chips], goes all-in
+PokRpro, at seat 0, is in this hand with 1780 Tournament chips.
+juggy88, at seat 2, is in this hand with 3766 Tournament chips.
+LaRayne, at seat 3, is in this hand with 1410 Tournament chips.
+LuckySteve57, at seat 4, is in this hand (absent) with 525 Tournament chips.
+MandyMom, at seat 5, is in this hand with 762 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 700 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 0 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand (absent) with 2368 Tournament chips.
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to juggy88 [ Ts 4s ]
+Dealt to LaRayne [ **** ]
+Dealt to LuckySteve57 [ **** ]
+Dealt to MandyMom [ **** ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+HAMMERMAN44 folds [100 Tournament chips]
+PokRpro calls [100 Tournament chips]
+juggy88 calls [100 Tournament chips]
+LaRayne calls [100 Tournament chips]
+LuckySteve57 folds [100 Tournament chips]
+MandyMom folds [100 Tournament chips]
+upcreek58 folds [50 Tournament chips]
+Round 1 is over.
+** Dealing Flop ** [ 5d ] board:[ 5d]
+** Dealing Flop ** [ 6s ] board:[ 5d 6s]
+** Dealing Flop ** [ 8c ] board:[ 5d 6s 8c]
+PokRpro checks
+juggy88 checks
+LaRayne checks
+Round 2 is over.
+** Dealing Turn ** [ Jc ] board:[ 5d 6s 8c Jc]
+PokRpro checks
+juggy88 checks
+LaRayne checks
+Round 3 is over.
+** Dealing River ** [ 6h ] board:[ 5d 6s 8c Jc 6h]
+PokRpro bets for 100 Tournament chips
+juggy88 folds [100 Tournament chips]
+LaRayne folds [100 Tournament chips]
+PokRpro is returned 100 Tournament chips (uncalled).
+Tournament all-in showdown -- players show:
+PokRpro shows [ 9c Jh ]
+socal pilot shows [ 7h 6c ]
+Round 4 is over.
+PokRpro shows [ 9c Jh ] two pair, jacks and sixes, nine kicker
+socal pilot wins main pot 410 Tournament chips with three sixes, jack/eight kickers.
+PokRpro wins side pot #1 30 Tournament chips with two pair, jacks and sixes, nine kicker.
+Seat 0: PokRpro (1710 Tournament chips) 
+Seat 2: juggy88 (3666 Tournament chips) 
+Seat 3: LaRayne (1310 Tournament chips) 
+Seat 4: LuckySteve57 (525 Tournament chips) 
+Seat 5: MandyMom (762 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (410 Tournament chips) 
+Seat 8: HAMMERMAN44 (2368 Tournament chips) 
+Game #28884650-20 ends
+Game #28884650-21 starts
+Seat 0: PokRpro (1710 Tournament chips) 
+Seat 2: juggy88 (3666 Tournament chips) 
+Seat 3: LaRayne (1310 Tournament chips) 
+Seat 4: LuckySteve57 (525 Tournament chips) 
+Seat 5: MandyMom (762 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (410 Tournament chips) 
+Seat 8: HAMMERMAN44 (2368 Tournament chips) 
+The button is at seat 5
+The button is moved to seat 6.
+socal pilot posts the small blind [50 Tournament chips]
+HAMMERMAN44 posts the big blind [100 Tournament chips]
+PokRpro, at seat 0, is in this hand with 1710 Tournament chips.
+juggy88, at seat 2, is in this hand with 3666 Tournament chips.
+LaRayne, at seat 3, is in this hand with 1310 Tournament chips.
+LuckySteve57, at seat 4, is in this hand with 525 Tournament chips.
+MandyMom, at seat 5, is in this hand with 762 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 700 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 360 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2268 Tournament chips.
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to juggy88 [ 3h 5c ]
+Dealt to LaRayne [ **** ]
+Dealt to LuckySteve57 [ **** ]
+Dealt to MandyMom [ **** ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+PokRpro folds [100 Tournament chips]
+juggy88 folds [100 Tournament chips]
+LaRayne folds [100 Tournament chips]
+LuckySteve57 folds [100 Tournament chips]
+MandyMom calls [100 Tournament chips]
+upcreek58 folds [100 Tournament chips]
+socal pilot folds [50 Tournament chips]
+HAMMERMAN44 checks
+Round 1 is over.
+** Dealing Flop ** [ 6s ] board:[ 6s]
+** Dealing Flop ** [ Ks ] board:[ 6s Ks]
+** Dealing Flop ** [ 2d ] board:[ 6s Ks 2d]
+HAMMERMAN44 checks
+MandyMom checks
+Round 2 is over.
+** Dealing Turn ** [ 8s ] board:[ 6s Ks 2d 8s]
+HAMMERMAN44 checks
+MandyMom checks
+Round 3 is over.
+** Dealing River ** [ Jd ] board:[ 6s Ks 2d 8s Jd]
+HAMMERMAN44 checks
+MandyMom checks
+Round 4 is over.
+HAMMERMAN44 shows [ 4c 4s ] a pair of fours
+Hand evaluation for HAMMERMAN44 (4c 4s Ks 8s Jd: a pair of fours)
+MandyMom doesn't show [ 7c Ah ]
+(MandyMom has 7c Ah.)
+HAMMERMAN44 wins main pot 250 Tournament chips with a pair of fours, king/jack kickers.
+Seat 0: PokRpro (1710 Tournament chips) 
+Seat 2: juggy88 (3666 Tournament chips) 
+Seat 3: LaRayne (1310 Tournament chips) 
+Seat 4: LuckySteve57 (525 Tournament chips) 
+Seat 5: MandyMom (662 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2518 Tournament chips) 
+Game #28884650-21 ends
+Game #28884650-22 starts
+Seat 0: PokRpro (1710 Tournament chips) 
+Seat 2: juggy88 (3666 Tournament chips) 
+Seat 3: LaRayne (1310 Tournament chips) 
+Seat 4: LuckySteve57 (525 Tournament chips) 
+Seat 5: MandyMom (662 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2518 Tournament chips) 
+The button is at seat 6
+The button is moved to seat 7.
+HAMMERMAN44 posts the small blind [50 Tournament chips]
+PokRpro posts the big blind [100 Tournament chips]
+PokRpro, at seat 0, is in this hand with 1610 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3666 Tournament chips.
+LaRayne, at seat 3, is in this hand with 1310 Tournament chips.
+LuckySteve57, at seat 4, is in this hand with 525 Tournament chips.
+MandyMom, at seat 5, is in this hand with 662 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 700 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 360 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2468 Tournament chips.
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to juggy88 [ 7h 4d ]
+Dealt to LaRayne [ **** ]
+Dealt to LuckySteve57 [ **** ]
+Dealt to MandyMom [ **** ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+juggy88 folds [100 Tournament chips]
+LaRayne folds [100 Tournament chips]
+LuckySteve57 calls [100 Tournament chips]
+MandyMom folds [100 Tournament chips]
+upcreek58 folds [100 Tournament chips]
+socal pilot folds [100 Tournament chips]
+HAMMERMAN44 raises [350 Tournament chips]
+PokRpro folds [300 Tournament chips]
+LuckySteve57 folds [300 Tournament chips]
+HAMMERMAN44 is returned 300 Tournament chips (uncalled).
+round 1 is over.
+Hand evaluation for HAMMERMAN44 (Ad Ah: a pair of aces)
+HAMMERMAN44 shows [ Ad Ah ] a pair of aces
+Hand evaluation for HAMMERMAN44 (Ad Ah: a pair of aces)
+HAMMERMAN44 wins main pot 300 Tournament chips.
+(PokRpro has entered the table, is no longer absent.)
+Seat 0: PokRpro (1610 Tournament chips) 
+Seat 2: juggy88 (3666 Tournament chips) 
+Seat 3: LaRayne (1310 Tournament chips) 
+Seat 4: LuckySteve57 (425 Tournament chips) 
+Seat 5: MandyMom (662 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+Game #28884650-22 ends
+Game #28884650-23 starts
+Seat 0: PokRpro (1610 Tournament chips) 
+Seat 2: juggy88 (3666 Tournament chips) 
+Seat 3: LaRayne (1310 Tournament chips) 
+Seat 4: LuckySteve57 (425 Tournament chips) 
+Seat 5: MandyMom (662 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+The button is at seat 7
+The button is moved to seat 8.
+PokRpro posts the small blind [75 Tournament chips]
+juggy88 posts the big blind [150 Tournament chips]
+PokRpro, at seat 0, is in this hand with 1535 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3516 Tournament chips.
+LaRayne, at seat 3, is in this hand with 1310 Tournament chips.
+LuckySteve57, at seat 4, is in this hand with 425 Tournament chips.
+MandyMom, at seat 5, is in this hand with 662 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 700 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 360 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2718 Tournament chips.
+PokRpro is dealt: **
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to juggy88 [ Qs 6h ]
+Dealt to LaRayne [ **** ]
+Dealt to LuckySteve57 [ **** ]
+Dealt to MandyMom [ **** ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+LaRayne folds [150 Tournament chips]
+LuckySteve57 calls [150 Tournament chips]
+MandyMom folds [150 Tournament chips]
+upcreek58 folds [150 Tournament chips]
+socal pilot folds [150 Tournament chips]
+HAMMERMAN44 folds [150 Tournament chips]
+PokRpro folds [75 Tournament chips]
+juggy88 folds
+round 1 is over.
+Hand evaluation for LuckySteve57 (2d 7s: seven high)
+LuckySteve57 wins main pot 375 Tournament chips.
+Seat 0: PokRpro (1535 Tournament chips) 
+Seat 2: juggy88 (3516 Tournament chips) 
+Seat 3: LaRayne (1310 Tournament chips) 
+Seat 4: LuckySteve57 (650 Tournament chips) 
+Seat 5: MandyMom (662 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+Game #28884650-23 ends
+Game #28884650-24 starts
+Seat 0: PokRpro (1535 Tournament chips) 
+Seat 2: juggy88 (3516 Tournament chips) 
+Seat 3: LaRayne (1310 Tournament chips) 
+Seat 4: LuckySteve57 (650 Tournament chips) 
+Seat 5: MandyMom (662 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+The button is at seat 8
+The button is moved to seat 0.
+juggy88 posts the small blind [75 Tournament chips]
+LaRayne posts the big blind [150 Tournament chips]
+PokRpro, at seat 0, is in this hand with 1535 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3441 Tournament chips.
+LaRayne, at seat 3, is in this hand with 1160 Tournament chips.
+LuckySteve57, at seat 4, is in this hand with 650 Tournament chips.
+MandyMom, at seat 5, is in this hand with 662 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 700 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 360 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2718 Tournament chips.
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+LaRayne is dealt: **
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to juggy88 [ 8h 9c ]
+Dealt to LaRayne [ **** ]
+Dealt to LuckySteve57 [ **** ]
+Dealt to MandyMom [ **** ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+LuckySteve57 folds [150 Tournament chips]
+MandyMom calls [150 Tournament chips]
+upcreek58 folds [150 Tournament chips]
+socal pilot folds [150 Tournament chips]
+HAMMERMAN44 folds [150 Tournament chips]
+PokRpro folds [150 Tournament chips]
+juggy88 folds [75 Tournament chips]
+LaRayne checks
+Round 1 is over.
+** Dealing Flop ** [ 6s ] board:[ 6s]
+** Dealing Flop ** [ 6d ] board:[ 6s 6d]
+** Dealing Flop ** [ 4c ] board:[ 6s 6d 4c]
+LaRayne bets for 150 Tournament chips
+MandyMom calls [150 Tournament chips]
+Round 2 is over.
+** Dealing Turn ** [ 7d ] board:[ 6s 6d 4c 7d]
+LaRayne bets for 150 Tournament chips
+MandyMom calls [150 Tournament chips]
+Round 3 is over.
+** Dealing River ** [ 6c ] board:[ 6s 6d 4c 7d 6c]
+LaRayne bets for 150 Tournament chips
+MandyMom calls [150 Tournament chips]
+Round 4 is over.
+LaRayne shows [ 3h Ac ] three sixes
+Hand evaluation for LaRayne (Ac 6s 6d 7d 6c: three sixes)
+MandyMom doesn't show [ Tc Kc ]
+(MandyMom has Tc Kc.)
+LaRayne wins main pot 1275 Tournament chips with three sixes, ace/seven kickers.
+Player LaRayne leaves the table with 1985 Tournament chips
+Seat 0: PokRpro (1535 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 4: LuckySteve57 (650 Tournament chips) 
+Seat 5: MandyMom (62 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+Game #28884650-24 ends
+Game #28884650-25 starts
+Seat 0: PokRpro (1535 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 4: LuckySteve57 (650 Tournament chips) 
+Seat 5: MandyMom (62 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+The button is at seat 0
+The button is moved to seat 2.
+LuckySteve57 posts the big blind [150 Tournament chips]
+PokRpro, at seat 0, is in this hand with 1535 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3441 Tournament chips.
+LuckySteve57, at seat 4, is in this hand with 500 Tournament chips.
+MandyMom, at seat 5, is in this hand with 62 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 700 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 360 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2718 Tournament chips.
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+
+Dealt to PokRpro [ **** ]
+Dealt to juggy88 [ As Ac ]
+Dealt to LuckySteve57 [ **** ]
+Dealt to MandyMom [ **** ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+MandyMom folds [62 Tournament chips]
+upcreek58 folds [150 Tournament chips]
+socal pilot folds [150 Tournament chips]
+HAMMERMAN44 folds [150 Tournament chips]
+PokRpro calls [150 Tournament chips]
+juggy88 folds [150 Tournament chips]
+LuckySteve57 checks
+Round 1 is over.
+** Dealing Flop ** [ 6d ] board:[ 6d]
+** Dealing Flop ** [ Td ] board:[ 6d Td]
+** Dealing Flop ** [ 8h ] board:[ 6d Td 8h]
+LuckySteve57 checks
+PokRpro has timed out - the hand is checked
+Round 2 is over.
+** Dealing Turn ** [ 3s ] board:[ 6d Td 8h 3s]
+LuckySteve57 checks
+PokRpro has timed out - the hand is checked
+Round 3 is over.
+** Dealing River ** [ 3d ] board:[ 6d Td 8h 3s 3d]
+LuckySteve57 bets for 300 Tournament chips
+PokRpro calls [300 Tournament chips]
+Round 4 is over.
+LuckySteve57 shows [ Qd 4c ] a pair of threes
+Hand evaluation for LuckySteve57 (Qd Td 8h 3s 3d: a pair of threes)
+PokRpro shows [ 9s Ts ] two pair, tens and threes
+Hand evaluation for PokRpro (9s Ts Td 3s 3d: two pair, tens and threes)
+PokRpro wins main pot 900 Tournament chips with two pair, tens and threes, nine kicker.
+Seat 0: PokRpro (1985 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 4: LuckySteve57 (200 Tournament chips) 
+Seat 5: MandyMom (62 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+Game #28884650-25 ends
+Game #28884650-26 starts
+Seat 0: PokRpro (1985 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 4: LuckySteve57 (200 Tournament chips) 
+Seat 5: MandyMom (62 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+The button is at seat 2
+LuckySteve57 posts the small blind [75 Tournament chips]
+MandyMom posts the big blind [62 Tournament chips], goes all-in
+PokRpro, at seat 0, is in this hand with 1985 Tournament chips.
+Katza51, at seat 1, is in this hand (absent) with 430 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3441 Tournament chips.
+LuckySteve57, at seat 4, is in this hand with 125 Tournament chips.
+MandyMom, at seat 5, is in this hand with 0 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 700 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 360 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2718 Tournament chips.
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+Dealt to PokRpro [ **** ]
+Dealt to Katza51 [ **** ]
+Dealt to juggy88 [ 9c 4h ]
+Dealt to LuckySteve57 [ **** ]
+Dealt to MandyMom [ **** ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+upcreek58 folds [150 Tournament chips]
+socal pilot folds [150 Tournament chips]
+HAMMERMAN44 folds [150 Tournament chips]
+PokRpro folds [150 Tournament chips]
+Katza51 folds [150 Tournament chips]
+juggy88 folds [150 Tournament chips]
+LuckySteve57 folds [75 Tournament chips]
+LuckySteve57 is returned 13 Tournament chips (uncalled).
+round 1 is over.
+Hand evaluation for MandyMom (Ks Th: king high)
+MandyMom wins main pot 124 Tournament chips.
+Seat 0: PokRpro (1985 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 4: LuckySteve57 (138 Tournament chips) 
+Seat 5: MandyMom (124 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+Game #28884650-26 ends
+Game #28884650-27 starts
+Seat 0: PokRpro (1985 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 4: LuckySteve57 (138 Tournament chips) 
+Seat 5: MandyMom (124 Tournament chips) 
+Seat 6: upcreek58 (700 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+The button is at seat 2
+The button is moved to seat 4.
+MandyMom posts the small blind [75 Tournament chips]
+upcreek58 posts the big blind [150 Tournament chips]
+PokRpro, at seat 0, is in this hand with 1985 Tournament chips.
+Katza51, at seat 1, is in this hand (absent) with 430 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3441 Tournament chips.
+LuckySteve57, at seat 4, is in this hand with 138 Tournament chips.
+MandyMom, at seat 5, is in this hand with 49 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 550 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 360 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2718 Tournament chips.
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+LuckySteve57 is dealt: **
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+LuckySteve57 is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to Katza51 [ **** ]
+Dealt to juggy88 [ 3s 8d ]
+Dealt to LuckySteve57 [ **** ]
+Dealt to MandyMom [ **** ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+socal pilot folds [150 Tournament chips]
+HAMMERMAN44 folds [150 Tournament chips]
+PokRpro calls [150 Tournament chips]
+Katza51 folds [150 Tournament chips]
+juggy88 folds [150 Tournament chips]
+LuckySteve57 calls all-in [138 Tournament chips]
+MandyMom folds [49 Tournament chips]
+upcreek58 folds
+Tournament all-in showdown -- players show:
+PokRpro shows [ 8h 6h ]
+LuckySteve57 shows [ Ac 4d ]
+Round 1 is over.
+** Dealing Flop ** [ Ah ] board:[ Ah]
+** Dealing Flop ** [ Jh ] board:[ Ah Jh]
+** Dealing Flop ** [ 9s ] board:[ Ah Jh 9s]
+        (no action in this round)
+Round 2 is over.
+** Dealing Turn ** [ 6d ] board:[ Ah Jh 9s 6d]
+        (no action in this round)
+Round 3 is over.
+** Dealing River ** [ 6c ] board:[ Ah Jh 9s 6d 6c]
+        (no action in this round)
+Round 4 is over.
+PokRpro shows [ 8h 6h ] three sixes, ace/jack kickers
+LuckySteve57 shows [ Ac 4d ] two pair, aces and sixes, jack kicker
+PokRpro wins main pot 489 Tournament chips with three sixes, ace/jack kickers.
+PokRpro wins side pot #1 24 Tournament chips with three sixes, ace/jack kickers.
+Seat 0: PokRpro (2348 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 4: LuckySteve57 (0 Tournament chips) 
+Seat 5: MandyMom (49 Tournament chips) 
+Seat 6: upcreek58 (550 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+Game #28884650-27 ends
+Player LuckySteve57 leaves the table with 0 Tournament chips
+Game #28884650-28 starts
+Seat 0: PokRpro (2348 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 5: MandyMom (49 Tournament chips) 
+Seat 6: upcreek58 (550 Tournament chips) 
+Seat 7: socal pilot (360 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+The button is at seat 4
+The button is moved to seat 5.
+upcreek58 posts the small blind [75 Tournament chips]
+socal pilot posts the big blind [150 Tournament chips]
+PokRpro, at seat 0, is in this hand with 2348 Tournament chips.
+Katza51, at seat 1, is in this hand (absent) with 430 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3441 Tournament chips.
+MandyMom, at seat 5, is in this hand with 49 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 475 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 210 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2718 Tournament chips.
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+MandyMom is dealt: **
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+MandyMom is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to Katza51 [ **** ]
+Dealt to juggy88 [ 7s 3d ]
+Dealt to MandyMom [ **** ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+(upcreek58 has entered the table, is no longer absent.)
+HAMMERMAN44 folds [150 Tournament chips]
+PokRpro calls [150 Tournament chips]
+Katza51 folds [150 Tournament chips]
+juggy88 folds [150 Tournament chips]
+MandyMom calls all-in [49 Tournament chips]
+upcreek58 folds [75 Tournament chips]
+socal pilot folds
+Tournament all-in showdown -- players show:
+PokRpro shows [ 4c Ad ]
+MandyMom shows [ Kd 2c ]
+Round 1 is over.
+** Dealing Flop ** [ 9c ] board:[ 9c]
+** Dealing Flop ** [ Ac ] board:[ 9c Ac]
+** Dealing Flop ** [ Qd ] board:[ 9c Ac Qd]
+        (no action in this round)
+Round 2 is over.
+** Dealing Turn ** [ 3c ] board:[ 9c Ac Qd 3c]
+        (no action in this round)
+Round 3 is over.
+** Dealing River ** [ 3h ] board:[ 9c Ac Qd 3c 3h]
+        (no action in this round)
+Round 4 is over.
+PokRpro shows [ 4c Ad ] two pair, aces and threes, queen kicker
+MandyMom shows [ Kd 2c ] a pair of threes, ace/king kickers
+PokRpro wins main pot 196 Tournament chips with two pair, aces and threes, queen kicker.
+PokRpro wins side pot #1 228 Tournament chips with two pair, aces and threes, queen kicker.
+Seat 0: PokRpro (2622 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 5: MandyMom (0 Tournament chips) 
+Seat 6: upcreek58 (475 Tournament chips) 
+Seat 7: socal pilot (210 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+Game #28884650-28 ends
+Player MandyMom leaves the table with 0 Tournament chips
+Game #28884650-29 starts
+Seat 0: PokRpro (2622 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 6: upcreek58 (475 Tournament chips) 
+Seat 7: socal pilot (210 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+The button is at seat 5
+The button is moved to seat 6.
+socal pilot posts the small blind [100 Tournament chips]
+HAMMERMAN44 posts the big blind [200 Tournament chips]
+PokRpro, at seat 0, is in this hand with 2622 Tournament chips.
+Katza51, at seat 1, is in this hand (absent) with 430 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3441 Tournament chips.
+upcreek58, at seat 6, is in this hand (absent) with 475 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 110 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2518 Tournament chips.
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to Katza51 [ **** ]
+Dealt to juggy88 [ 5c Jd ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+PokRpro folds [200 Tournament chips]
+Katza51 folds [200 Tournament chips]
+juggy88 folds [200 Tournament chips]
+upcreek58 folds [200 Tournament chips]
+socal pilot folds [100 Tournament chips]
+HAMMERMAN44 is returned 100 Tournament chips (uncalled).
+round 1 is over.
+Hand evaluation for HAMMERMAN44 (9d 9h: a pair of nines)
+(upcreek58 has entered the table, is no longer absent.)
+HAMMERMAN44 shows [ 9d 9h ] a pair of nines
+Hand evaluation for HAMMERMAN44 (9d 9h: a pair of nines)
+HAMMERMAN44 wins main pot 200 Tournament chips.
+Seat 0: PokRpro (2622 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 6: upcreek58 (475 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2818 Tournament chips) 
+Game #28884650-29 ends
+Game #28884650-30 starts
+Seat 0: PokRpro (2622 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 6: upcreek58 (475 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2818 Tournament chips) 
+The button is at seat 6
+The button is moved to seat 7.
+HAMMERMAN44 posts the small blind [100 Tournament chips]
+PokRpro posts the big blind [200 Tournament chips]
+PokRpro, at seat 0, is in this hand with 2422 Tournament chips.
+Katza51, at seat 1, is in this hand (absent) with 430 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3441 Tournament chips.
+upcreek58, at seat 6, is in this hand with 475 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 110 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2718 Tournament chips.
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to Katza51 [ **** ]
+Dealt to juggy88 [ Jd 9s ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+Katza51 folds [200 Tournament chips]
+juggy88 folds [200 Tournament chips]
+upcreek58 calls [200 Tournament chips]
+socal pilot folds [110 Tournament chips]
+HAMMERMAN44 folds [100 Tournament chips]
+PokRpro has timed out - the hand is checked
+Round 1 is over.
+** Dealing Flop ** [ Qc ] board:[ Qc]
+** Dealing Flop ** [ Qh ] board:[ Qc Qh]
+** Dealing Flop ** [ 5c ] board:[ Qc Qh 5c]
+PokRpro has timed out - the hand is checked
+upcreek58 bets for 200 Tournament chips
+PokRpro folds [200 Tournament chips]
+upcreek58 is returned 200 Tournament chips (uncalled).
+round 2 is over.
+Hand evaluation for upcreek58 (Tc Jc Qc Qh 5c: a pair of queens)
+upcreek58 wins main pot 500 Tournament chips.
+Seat 0: PokRpro (2422 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 6: upcreek58 (775 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+Game #28884650-30 ends
+Game #28884650-31 starts
+Seat 0: PokRpro (2422 Tournament chips) 
+Seat 1: Katza51 (430 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 6: upcreek58 (775 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2718 Tournament chips) 
+The button is at seat 7
+The button is moved to seat 8.
+PokRpro posts the small blind [100 Tournament chips]
+Katza51 posts the big blind [200 Tournament chips]
+PokRpro, at seat 0, is in this hand (absent) with 2322 Tournament chips.
+Katza51, at seat 1, is in this hand (absent) with 230 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3441 Tournament chips.
+upcreek58, at seat 6, is in this hand with 775 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 110 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2718 Tournament chips.
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to Katza51 [ **** ]
+Dealt to juggy88 [ 4h 3d ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+juggy88 folds [200 Tournament chips]
+upcreek58 calls [200 Tournament chips]
+socal pilot folds [110 Tournament chips]
+HAMMERMAN44 calls [200 Tournament chips]
+PokRpro folds [100 Tournament chips]
+Katza51 folds
+Round 1 is over.
+** Dealing Flop ** [ 2h ] board:[ 2h]
+** Dealing Flop ** [ 2d ] board:[ 2h 2d]
+** Dealing Flop ** [ Jd ] board:[ 2h 2d Jd]
+upcreek58 bets for 200 Tournament chips
+HAMMERMAN44 folds [200 Tournament chips]
+upcreek58 is returned 200 Tournament chips (uncalled).
+round 2 is over.
+Hand evaluation for upcreek58 (9c 9h 2h 2d Jd: two pair, nines and deuces)
+upcreek58 wins main pot 700 Tournament chips.
+Seat 0: PokRpro (2322 Tournament chips) 
+Seat 1: Katza51 (230 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 6: upcreek58 (1275 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2518 Tournament chips) 
+Game #28884650-31 ends
+Game #28884650-32 starts
+Seat 0: PokRpro (2322 Tournament chips) 
+Seat 1: Katza51 (230 Tournament chips) 
+Seat 2: juggy88 (3441 Tournament chips) 
+Seat 6: upcreek58 (1275 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2518 Tournament chips) 
+The button is at seat 8
+The button is moved to seat 0.
+Katza51 posts the small blind [100 Tournament chips]
+juggy88 posts the big blind [200 Tournament chips]
+PokRpro, at seat 0, is in this hand (absent) with 2322 Tournament chips.
+Katza51, at seat 1, is in this hand (absent) with 130 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3241 Tournament chips.
+upcreek58, at seat 6, is in this hand with 1275 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 110 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2518 Tournament chips.
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to Katza51 [ **** ]
+Dealt to juggy88 [ 5h Js ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+upcreek58 calls [200 Tournament chips]
+socal pilot folds [110 Tournament chips]
+HAMMERMAN44 folds [200 Tournament chips]
+PokRpro folds [200 Tournament chips]
+Katza51 folds [100 Tournament chips]
+juggy88 folds
+round 1 is over.
+Hand evaluation for upcreek58 (Ac Td: ace high)
+(PokRpro has entered the table, is no longer absent.)
+upcreek58 wins main pot 500 Tournament chips.
+Seat 0: PokRpro (2322 Tournament chips) 
+Seat 1: Katza51 (130 Tournament chips) 
+Seat 2: juggy88 (3241 Tournament chips) 
+Seat 6: upcreek58 (1575 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2518 Tournament chips) 
+Game #28884650-32 ends
+Game #28884650-33 starts
+Seat 0: PokRpro (2322 Tournament chips) 
+Seat 1: Katza51 (130 Tournament chips) 
+Seat 2: juggy88 (3241 Tournament chips) 
+Seat 6: upcreek58 (1575 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2518 Tournament chips) 
+The button is at seat 0
+The button is moved to seat 1.
+juggy88 posts the small blind [100 Tournament chips]
+upcreek58 posts the big blind [200 Tournament chips]
+PokRpro, at seat 0, is in this hand with 2322 Tournament chips.
+Katza51, at seat 1, is in this hand (absent) with 130 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3141 Tournament chips.
+upcreek58, at seat 6, is in this hand with 1375 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 110 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2518 Tournament chips.
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+Dealt to PokRpro [ **** ]
+Dealt to Katza51 [ **** ]
+Dealt to juggy88 [ Jc Qs ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+socal pilot folds [110 Tournament chips]
+HAMMERMAN44 folds [200 Tournament chips]
+PokRpro folds [200 Tournament chips]
+Katza51 folds [130 Tournament chips]
+juggy88 folds [100 Tournament chips]
+upcreek58 is returned 100 Tournament chips (uncalled).
+round 1 is over.
+Hand evaluation for upcreek58 (7d 8h: eight high)
+upcreek58 wins main pot 200 Tournament chips.
+Seat 0: PokRpro (2322 Tournament chips) 
+Seat 1: Katza51 (130 Tournament chips) 
+Seat 2: juggy88 (3141 Tournament chips) 
+Seat 6: upcreek58 (1675 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2518 Tournament chips) 
+Game #28884650-33 ends
+Game #28884650-34 starts
+Seat 0: PokRpro (2322 Tournament chips) 
+Seat 1: Katza51 (130 Tournament chips) 
+Seat 2: juggy88 (3141 Tournament chips) 
+Seat 6: upcreek58 (1675 Tournament chips) 
+Seat 7: socal pilot (110 Tournament chips) 
+Seat 8: HAMMERMAN44 (2518 Tournament chips) 
+The button is at seat 1
+The button is moved to seat 2.
+upcreek58 posts the small blind [100 Tournament chips]
+socal pilot posts the big blind [110 Tournament chips], goes all-in
+PokRpro, at seat 0, is in this hand with 2322 Tournament chips.
+Katza51, at seat 1, is in this hand (absent) with 130 Tournament chips.
+juggy88, at seat 2, is in this hand (absent) with 3141 Tournament chips.
+upcreek58, at seat 6, is in this hand with 1575 Tournament chips.
+socal pilot, at seat 7, is in this hand (absent) with 0 Tournament chips.
+HAMMERMAN44, at seat 8, is in this hand with 2518 Tournament chips.
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+upcreek58 is dealt: **
+socal pilot is dealt: **
+HAMMERMAN44 is dealt: **
+PokRpro is dealt: **
+Katza51 is dealt: **
+
+Dealt to PokRpro [ **** ]
+Dealt to Katza51 [ **** ]
+Dealt to juggy88 [ Kh 7s ]
+Dealt to upcreek58 [ **** ]
+Dealt to socal pilot [ **** ]
+Dealt to HAMMERMAN44 [ **** ]
+HAMMERMAN44 folds [200 Tournament chips]
+PokRpro folds [200 Tournament chips]
+Katza51 folds [130 Tournament chips]
+juggy88 folds [200 Tournament chips]
+upcreek58 calls [100 Tournament chips]
+upcreek58 is returned 90 Tournament chips (uncalled).
+Tournament all-in showdown -- players show:
+upcreek58 shows [ 6d Qc ]
+socal pilot shows [ 7h 5d ]
+Round 1 is over.
+** Dealing Flop ** [ 3d ] board:[ 3d]
+** Dealing Flop ** [ Ah ] board:[ 3d Ah]
+** Dealing Flop ** [ 2s ] board:[ 3d Ah 2s]
+        (no action in this round)
+Round 2 is over.
+** Dealing Turn ** [ Ts ] board:[ 3d Ah 2s Ts]
+        (no action in this round)
+Round 3 is over.
+** Dealing River ** [ Js ] board:[ 3d Ah 2s Ts Js]
+        (no action in this round)
+Round 4 is over.
+upcreek58 shows [ 6d Qc ] ace/queen/jack high
+upcreek58 wins main pot 220 Tournament chips with ace/queen/jack high.
+Seat 0: PokRpro (2322 Tournament chips) 
+Seat 1: Katza51 (130 Tournament chips) 
+Seat 2: juggy88 (3141 Tournament chips) 
+Seat 6: upcreek58 (1785 Tournament chips) 
+Seat 7: socal pilot (0 Tournament chips) 
+Seat 8: HAMMERMAN44 (2518 Tournament chips) 
+Game #28884650-34 ends
+Player socal pilot leaves the table with 0 Tournament chips
+Player upcreek58 leaves the table with 1785 Tournament chips
+Player HAMMERMAN44 leaves the table with 2518 Tournament chips
+Player PokRpro leaves the table with 2322 Tournament chips
+Player Katza51 leaves the table with 130 Tournament chips
+Player juggy88 leaves the table with 3141 Tournament chips
+
+

@@ -1,16 +1,21 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Card;
+import 'package:poker_app/hand_history_parser.dart';
+import 'package:poker_app/poker_card.dart';
+import 'package:poker_app/card_widget.dart';
 
 class GameBoardWidget extends StatelessWidget {
   final int playerCount;
   final String? gameId;
   final int? buttonSeat;
+  final List<Player>? players;
 
   const GameBoardWidget({
     super.key,
     this.playerCount = 9,
     this.gameId,
     this.buttonSeat = 1, // Default to seat 1
+    this.players,
   });
 
   @override
@@ -28,6 +33,12 @@ class GameBoardWidget extends StatelessWidget {
 
         // Generate player seat widgets
         final List<Widget> playerSeats = List.generate(playerCount, (index) {
+          // Find the player for the current seat index. Seat numbers are 1-based.
+          final seatNumber = index + 1;
+          final player = players?.firstWhere(
+            (p) => p.seat == seatNumber,
+            orElse: () => Player(seat: 0, name: '', stack: 0), // Dummy player if not found
+          );
           // Calculate position for each seat around an ellipse
           // We add pi/2 to start the first player at the bottom center
           final double angle = (index / playerCount) * 2 * pi + (pi / 2);
@@ -39,19 +50,62 @@ class GameBoardWidget extends StatelessWidget {
           final double x = xRadius * cos(angle);
           final double y = yRadius * sin(angle);
 
-          return Positioned(
-            left: (totalWidth / 2) + x - seatRadius,
-            top: (totalHeight / 2) + y - seatRadius,
-            child: CircleAvatar(
-              radius: seatRadius,
-              backgroundColor: Colors.blueGrey,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
+          // If no player is at this seat, show a simple seat indicator.
+          if (player == null || player.seat == 0) {
+            return Positioned(
+              left: (totalWidth / 2) + x - seatRadius,
+              top: (totalHeight / 2) + y - seatRadius,
+              child: CircleAvatar(
+                radius: seatRadius,
+                backgroundColor: Colors.blueGrey.withOpacity(0.5),
                 child: Text(
-                  'S${index + 1}',
+                  'S$seatNumber',
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
+            );
+          }
+
+          // If a player is at the seat, show their info and cards.
+          return Positioned(
+            // Adjust position to center the new player widget
+            left: (totalWidth / 2) + x - (seatRadius * 1.5),
+            top: (totalHeight / 2) + y - (seatRadius * 1.2),
+            child: Column(
+              children: [
+                // Dummy Cards for the player
+                Row(
+                  children: [
+                    SizedBox(width: seatRadius * 0.7, height: seatRadius, child: CardWidget(card: Card(suit: Suit.clubs, rank: Rank.ace))),
+                    SizedBox(width: seatRadius * 0.7, height: seatRadius, child: CardWidget(card: Card(suit: Suit.spades, rank: Rank.king))),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                // Player name and stack
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  constraints: BoxConstraints(maxWidth: seatRadius * 2.5),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.7),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey.shade600, width: 1),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        player.name,
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                      Text(
+                        player.stack.toString(),
+                        style: const TextStyle(color: Colors.greenAccent, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           );
         });

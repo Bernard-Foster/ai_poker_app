@@ -90,7 +90,8 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
                   final gameState = _parser?.parseHand(0);
                   return GameBoardWidget(
                       gameId: gameState?.gameId,
-                      buttonSeat: gameState?.buttonSeat);
+                      buttonSeat: gameState?.buttonSeat,
+                      players: gameState?.players);
                 }),
                 const Divider(height: 1),
                 Padding(

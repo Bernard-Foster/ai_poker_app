@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:poker_app/hand_history_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:poker_app/poker_card.dart' as poker;
+import 'package:poker_app/card_widget.dart';
 // NOTE: Replace with your server's IP.
 // - Use http://10.0.2.2:8000 for the Android emulator.
 // - Use your computer's local network IP for a physical device.
@@ -12,78 +14,7 @@ void main() {
   runApp(const MyApp());
 }
 
-enum Suit { hearts, diamonds, clubs, spades }
-
 enum Street { preflop, flop, turn, river }
-
-enum Rank { two, three, four, five, six, seven, eight, nine, ten, jack, queen, king, ace }
-
-class Card {
-  final Suit suit;
-  final Rank rank;
-
-  const Card({required this.suit, required this.rank});
-
-  String get rankString {
-    switch (rank) {
-      case Rank.two: return '2';
-      case Rank.three: return '3';
-      case Rank.four: return '4';
-      case Rank.five: return '5';
-      case Rank.six: return '6';
-      case Rank.seven: return '7';
-      case Rank.eight: return '8';
-      case Rank.nine: return '9';
-      case Rank.ten: return 'T';
-      case Rank.jack: return 'J';
-      case Rank.queen: return 'Q';
-      case Rank.king: return 'K';
-      case Rank.ace: return 'A';
-    }
-  }
-
-  String get suitString {
-    switch (suit) {
-      case Suit.hearts: return '♥';
-      case Suit.diamonds: return '♦';
-      case Suit.clubs: return '♣';
-      case Suit.spades: return '♠';
-    }
-  }
-
-  String get serverSuitString {
-    switch (suit) {
-      case Suit.hearts: return 'h';
-      case Suit.diamonds: return 'd';
-      case Suit.clubs: return 'c';
-      case Suit.spades: return 's';
-    }
-  }
-
-  String toServerString() => '$rankString$serverSuitString';
-
-  Color get suitColor {
-    switch (suit) {
-      case Suit.hearts:
-      case Suit.diamonds:
-        return Colors.red;
-      case Suit.clubs:
-      case Suit.spades:
-        return Colors.black;
-    }
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Card &&
-          runtimeType == other.runtimeType &&
-          suit == other.suit &&
-          rank == other.rank;
-
-  @override
-  int get hashCode => suit.hashCode ^ rank.hashCode;
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -144,49 +75,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class CardWidget extends StatelessWidget {
-  final Card card;
-
-  const CardWidget({
-    super.key,
-    required this.card,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(2.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 1.0),
-        borderRadius: BorderRadius.circular(8.0),
-        color: Colors.white,
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              card.rankString,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: card.suitColor,
-              ),
-            ),
-            Text(
-              card.suitString,
-              style: TextStyle(
-                fontSize: 18,
-                color: card.suitColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class PokerPage extends StatefulWidget {
   const PokerPage({super.key, required this.title});
 
@@ -199,14 +87,14 @@ class PokerPage extends StatefulWidget {
 class _PokerPageState extends State<PokerPage> {
   // State for Hero's hand: can be a range string like "AKs" or "77".
   String? _heroHand;
-  Rank? _heroRank1;
-  Rank? _heroRank2;
+  poker.Rank? _heroRank1;
+  poker.Rank? _heroRank2;
   bool _heroSuited = false;
-  final List<List<Card>> _villainHands = [[]]; // Start with one villain
-  final List<Card> _communityCards = [];
+  final List<List<poker.Card>> _villainHands = [[]]; // Start with one villain
+  final List<poker.Card> _communityCards = [];
   Street _selectedStreet = Street.preflop;
-  Suit? _selectedSuit;
-  Rank? _selectedRank;
+  poker.Suit? _selectedSuit;
+  poker.Rank? _selectedRank;
   double? _heroEquity;
   List<double?>? _villainEquities;
   bool _isLoading = false;
@@ -216,24 +104,24 @@ class _PokerPageState extends State<PokerPage> {
     super.initState();
   }
 
-  void _onVillainCardTapped(int villainIndex, Card card) {
+  void _onVillainCardTapped(int villainIndex, poker.Card card) {
     setState(() {
       _villainHands[villainIndex].remove(card);
       _resetEquity();
     });
   }
 
-  void _onBoardCardTapped(Card card) {
+  void _onBoardCardTapped(poker.Card card) {
     setState(() {
       _communityCards.remove(card);
       _resetEquity();
     });
   }
 
-  void _addCard(List<Card> cardList, int limit) {
+  void _addCard(List<poker.Card> cardList, int limit) {
     if (_selectedSuit == null || _selectedRank == null) return;
 
-    final newCard = Card(suit: _selectedSuit!, rank: _selectedRank!);
+    final newCard = poker.Card(suit: _selectedSuit!, rank: _selectedRank!);
 
     // A card cannot be in play more than once.
     final isCardDealt = _villainHands
@@ -341,7 +229,7 @@ class _PokerPageState extends State<PokerPage> {
   @override
   Widget build(BuildContext context) {
     final selectedCard = (_selectedSuit != null && _selectedRank != null)
-        ? Card(suit: _selectedSuit!, rank: _selectedRank!)
+        ? poker.Card(suit: _selectedSuit!, rank: _selectedRank!)
         : null;
 
     final isCardDealt = selectedCard != null &&
@@ -400,30 +288,30 @@ class _PokerPageState extends State<PokerPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    DropdownButton<Rank>(
+                    DropdownButton<poker.Rank>(
                       hint: const Text('Rank 1'),
                       value: _heroRank1,
-                      onChanged: (Rank? newValue) {
+                      onChanged: (poker.Rank? newValue) {
                         setState(() => _heroRank1 = newValue);
                       },
-                      items: Rank.values.reversed.map((Rank rank) {
-                        return DropdownMenuItem<Rank>(
+                      items: poker.Rank.values.reversed.map((poker.Rank rank) {
+                        return DropdownMenuItem<poker.Rank>(
                           value: rank,
-                          child: Text(Card(suit: Suit.spades, rank: rank).rankString),
+                          child: Text(poker.Card(suit: poker.Suit.spades, rank: rank).rankString),
                         );
                       }).toList(),
                     ),
                     const SizedBox(width: 10),
-                    DropdownButton<Rank>(
+                    DropdownButton<poker.Rank>(
                       hint: const Text('Rank 2'),
                       value: _heroRank2,
-                      onChanged: (Rank? newValue) {
+                      onChanged: (poker.Rank? newValue) {
                         setState(() => _heroRank2 = newValue);
                       },
-                      items: Rank.values.reversed.map((Rank rank) {
-                        return DropdownMenuItem<Rank>(
+                      items: poker.Rank.values.reversed.map((poker.Rank rank) {
+                        return DropdownMenuItem<poker.Rank>(
                           value: rank,
-                          child: Text(Card(suit: Suit.spades, rank: rank).rankString),
+                          child: Text(poker.Card(suit: poker.Suit.spades, rank: rank).rankString),
                         );
                       }).toList(),
                     ),
@@ -444,17 +332,17 @@ class _PokerPageState extends State<PokerPage> {
                     if (_heroRank1 != null && _heroRank2 != null) {
                       if (_heroRank1 == _heroRank2) {
                         // Pocket pair
-                        final rankStr = Card(suit: Suit.spades, rank: _heroRank1!).rankString;
+                        final rankStr = poker.Card(suit: poker.Suit.spades, rank: _heroRank1!).rankString;
                         setState(() => _heroHand = '$rankStr$rankStr');
                       } else {
                         // Ensure ranks are ordered correctly (high then low)
-                        final r1Index = Rank.values.indexOf(_heroRank1!);
-                        final r2Index = Rank.values.indexOf(_heroRank2!);
+                        final r1Index = poker.Rank.values.indexOf(_heroRank1!);
+                        final r2Index = poker.Rank.values.indexOf(_heroRank2!);
                         final highRank = r1Index > r2Index ? _heroRank1! : _heroRank2!;
                         final lowRank = r1Index > r2Index ? _heroRank2! : _heroRank1!;
 
-                        final highRankStr = Card(suit: Suit.spades, rank: highRank).rankString;
-                        final lowRankStr = Card(suit: Suit.spades, rank: lowRank).rankString;
+                        final highRankStr = poker.Card(suit: poker.Suit.spades, rank: highRank).rankString;
+                        final lowRankStr = poker.Card(suit: poker.Suit.spades, rank: lowRank).rankString;
                         final suitedStr = _heroSuited ? 's' : 'o';
 
                         setState(() => _heroHand = '$highRankStr$lowRankStr$suitedStr');
@@ -598,40 +486,40 @@ class _PokerPageState extends State<PokerPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    DropdownButton<Suit>(
+                    DropdownButton<poker.Suit>(
                       hint: const Text('Suit'),
                       value: _selectedSuit,
-                      onChanged: (Suit? newValue) {
+                      onChanged: (poker.Suit? newValue) {
                         setState(() {
                           _selectedSuit = newValue;
                         });
                       },
-                      items: Suit.values.map((Suit suit) {
-                        return DropdownMenuItem<Suit>(
+                      items: poker.Suit.values.map((poker.Suit suit) {
+                        return DropdownMenuItem<poker.Suit>(
                           value: suit,
                           child: Text(
-                            Card(suit: suit, rank: Rank.ace).suitString,
+                            poker.Card(suit: suit, rank: poker.Rank.ace).suitString,
                             style: TextStyle(
                                 color:
-                                    Card(suit: suit, rank: Rank.ace).suitColor,
+                                    poker.Card(suit: suit, rank: poker.Rank.ace).suitColor,
                                 fontSize: 24),
                           ),
                         );
                       }).toList(),
                     ),
-                    DropdownButton<Rank>(
+                    DropdownButton<poker.Rank>(
                       hint: const Text('Rank'),
                       value: _selectedRank,
-                      onChanged: (Rank? newValue) {
+                      onChanged: (poker.Rank? newValue) {
                         setState(() {
                           _selectedRank = newValue;
                         });
                       },
-                      items: Rank.values.map((Rank rank) {
-                        return DropdownMenuItem<Rank>(
+                      items: poker.Rank.values.map((poker.Rank rank) {
+                        return DropdownMenuItem<poker.Rank>(
                           value: rank,
                           child: Text(
-                              Card(suit: Suit.spades, rank: rank).rankString),
+                              poker.Card(suit: poker.Suit.spades, rank: rank).rankString),
                         );
                       }).toList(),
                     ),

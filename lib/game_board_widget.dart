@@ -3,12 +3,14 @@ import 'package:flutter/material.dart' hide Card;
 import 'package:poker_app/hand_history_parser.dart';
 import 'package:poker_app/poker_card.dart';
 import 'package:poker_app/card_widget.dart';
+import 'package:poker_app/chip_stack_widget.dart';
 
 class GameBoardWidget extends StatelessWidget {
   final int playerCount;
   final String? gameId;
   final int? buttonSeat;
   final List<Player>? players;
+  final List<Bet>? bets;
 
   const GameBoardWidget({
     super.key,
@@ -16,6 +18,7 @@ class GameBoardWidget extends StatelessWidget {
     this.gameId,
     this.buttonSeat = 1, // Default to seat 1
     this.players,
+    this.bets,
   });
 
   @override
@@ -52,10 +55,16 @@ class GameBoardWidget extends StatelessWidget {
           final double x = xRadius * cos(angle);
           final double y = yRadius * sin(angle);
 
+          // Add a specific pixel offset for seat 2 to fix alignment
+          double xOffset = 0;
+          if (seatNumber == 2) {
+            xOffset = 7.0;
+          }
+
           // If no player is at this seat, show a simple seat indicator.
           if (player == null) {
             return Positioned(
-              left: (totalWidth / 2) + x - seatRadius,
+              left: (totalWidth / 2) + x - seatRadius + xOffset,
               top: (totalHeight / 2) + y - seatRadius,
               child: CircleAvatar(
                 radius: seatRadius,
@@ -71,7 +80,7 @@ class GameBoardWidget extends StatelessWidget {
           // If a player is at the seat, show their info and cards.
           return Positioned(
             // Adjust position to center the new player widget
-            left: (totalWidth / 2) + x - (seatRadius * 1.5),
+            left: (totalWidth / 2) + x - (seatRadius * 1.5) + xOffset,
             top: (totalHeight / 2) + y - (seatRadius * 1.2),
             child: Column(
               children: [
@@ -155,6 +164,32 @@ class GameBoardWidget extends StatelessWidget {
           );
         }
 
+        // Generate bet widgets
+        final List<Widget> betWidgets = [];
+        if (bets != null) {
+          for (final bet in bets!) {
+            // Calculate position for the bet, in front of the player
+            final double angle = (bet.seat / playerCount) * 2 * pi + (pi / 2);
+
+            // Place the bet closer to the center of the table than the player
+            final double xRadius = tableWidth / 2 - seatRadius * 2.5;
+            final double yRadius = tableHeight / 2 - seatRadius * 2.5;
+
+            final double x = xRadius * cos(angle);
+            final double y = yRadius * sin(angle);
+
+            final double betWidgetSize = seatRadius * 1.2;
+
+            betWidgets.add(
+              Positioned(
+                left: (totalWidth / 2) + x - (betWidgetSize / 2),
+                top: (totalHeight / 2) + y - (betWidgetSize / 2),
+                child: SizedBox(width: betWidgetSize, height: betWidgetSize * 1.2, child: ChipStackWidget(amount: bet.amount)),
+              ),
+            );
+          }
+        }
+
         return Center(
           child: Container(
             width: totalWidth,
@@ -189,6 +224,7 @@ class GameBoardWidget extends StatelessWidget {
                 // The player seats overlaid on the table
                 ...playerSeats,
                 ...dealerButton,
+                ...betWidgets,
               ],
             ),
           ),

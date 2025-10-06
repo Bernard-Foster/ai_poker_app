@@ -11,13 +11,21 @@ class Player {
   }
 }
 
+class Bet {
+  final int seat;
+  final int amount;
+
+  Bet({required this.seat, required this.amount});
+}
+
 class GameState {
   final String gameId;
   final List<Player> players;
   final int? buttonSeat;
+  final List<Bet> bets;
   // ... other properties like button position, actions, etc. will be added later
 
-  GameState({required this.gameId, required this.players, this.buttonSeat});
+  GameState({required this.gameId, required this.players, this.buttonSeat, this.bets = const []});
 }
 
 class HandHistoryParser {
@@ -78,6 +86,26 @@ class HandHistoryParser {
       buttonSeat = int.parse(buttonMatch.group(1)!);
     }
 
-    return GameState(gameId: gameId, players: players, buttonSeat: buttonSeat);
+    // 4. Parse Blinds
+    final List<Bet> bets = [];
+    final blindRegex = RegExp(r'^(.*) posts the (small|big) blind \[(\d+) Tournament chips\]', multiLine: true);
+    final blindMatches = blindRegex.allMatches(handText);
+
+    for (final match in blindMatches) {
+      final playerName = match.group(1)!;
+      final amount = int.parse(match.group(3)!);
+
+      // Find the seat number for the player who posted the blind
+      try {
+        final player = players.firstWhere((p) => p.name == playerName);
+        bets.add(Bet(seat: player.seat, amount: amount));
+      } catch (e) {
+        // Player not found, might happen with inconsistent naming. Skip for now.
+        print('Could not find player $playerName to post blind.');
+      }
+    }
+
+
+    return GameState(gameId: gameId, players: players, buttonSeat: buttonSeat, bets: bets);
   }
 }

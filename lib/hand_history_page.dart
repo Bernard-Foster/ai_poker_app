@@ -91,7 +91,8 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
                   return GameBoardWidget(
                       gameId: gameState?.gameId,
                       buttonSeat: gameState?.buttonSeat,
-                      players: gameState?.players);
+                      players: gameState?.players,
+                      bets: gameState?.bets);
                 }),
                 const Divider(height: 1),
                 Padding(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:file_picker/file_picker.dart';
+import 'package:poker_app/hand_history_parser.dart';
 import 'package:poker_app/game_board_widget.dart';
 
 class HandHistoryPage extends StatefulWidget {
@@ -16,6 +17,7 @@ class HandHistoryPage extends StatefulWidget {
 
 class _HandHistoryPageState extends State<HandHistoryPage> {
   String? _handHistoryText;
+  HandHistoryParser? _parser;
 
   Future<void> _pickFile() async {
     // Use file_picker to open the file explorer
@@ -43,7 +45,10 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
             throw Exception("File path is null on mobile/desktop.");
           }
         }
-        setState(() => _handHistoryText = contents);
+        setState(() {
+          _handHistoryText = contents;
+          _parser = HandHistoryParser(contents);
+        });
       } catch (e) {
         setState(() => _handHistoryText = 'Error reading file: $e');
       }
@@ -80,7 +85,12 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
             )
           : Column(
               children: [
-                const GameBoardWidget(), // This will stay at the top
+                Builder(builder: (context) {
+                  // For now, let's just display the info for the first hand.
+                  final gameState = _parser?.parseHand(0);
+                  return GameBoardWidget(
+                      gameId: gameState?.gameId);
+                }),
                 const Divider(height: 1),
                 Expanded(
                   child: SingleChildScrollView(

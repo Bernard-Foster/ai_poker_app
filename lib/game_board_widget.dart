@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 
 class GameBoardWidget extends StatelessWidget {
   final int playerCount;
+  final String? gameId;
 
   const GameBoardWidget({
     super.key,
     this.playerCount = 9,
+    this.gameId,
   });
 
   @override
@@ -69,6 +71,18 @@ class GameBoardWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(tableHeight / 2), // Oval shape
                       border: Border.all(color: Colors.brown.shade800, width: 10),
                     ),
+                    child: gameId != null
+                        ? Center(
+                            child: Text(
+                              gameId!,
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.6),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          )
+                        : null,
                   ),
                 ),
                 // The player seats overlaid on the table

@@ -27,11 +27,11 @@ class HandHistoryParser {
   HandHistoryParser(this._fullHistoryText) {
     // Split the full text into individual hand histories.
     // We split by the lookahead `(?=...)` to keep the "Game #... starts" delimiter.
-    final handStartRegex = RegExp(r'Game #\d+-\d+ starts');
+    final handStartRegex = RegExp(r'^Game #\d+-\d+ starts', multiLine: true);
     _handHistories = _fullHistoryText.trim()
         .split(RegExp(r'(?=' + handStartRegex.pattern + ')', multiLine: true))
         // Ensure we only process chunks that actually start with the required pattern.
-        .where((s) => s.trim().startsWith(handStartRegex))
+        .where((s) => handStartRegex.hasMatch(s.trimLeft()))
         .toList();
   }
 
@@ -45,7 +45,7 @@ class HandHistoryParser {
     final handText = _handHistories[handIndex];
 
     // 1. Parse Game ID
-    final gameIdRegex = RegExp(r'Game #(\d+-\d+) starts');
+    final gameIdRegex = RegExp(r'^Game #(\d+-\d+) starts');
     final gameIdMatch = gameIdRegex.firstMatch(handText);
     if (gameIdMatch == null) return null;
     final gameId = 'Game #${gameIdMatch.group(1)!}';

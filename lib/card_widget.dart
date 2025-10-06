@@ -19,25 +19,28 @@ class CardWidget extends StatelessWidget {
         color: Colors.white,
       ),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              card.rankString,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: card.suitColor,
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                card.rankString,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: card.suitColor,
+                ),
               ),
-            ),
-            Text(
-              card.suitString,
-              style: TextStyle(
-                fontSize: 18,
-                color: card.suitColor,
+              Text(
+                card.suitString,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: card.suitColor,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -92,15 +92,22 @@ class GameBoardWidget extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      Text(
-                        player.name,
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                      SizedBox(
+                        height: 14, // Give a specific height for the FittedBox to work within
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            player.name,
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ),
-                      Text(
-                        player.stack.toString(),
-                        style: const TextStyle(color: Colors.greenAccent, fontSize: 11),
+                      FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          player.stack.toString(),
+                          style: const TextStyle(color: Colors.greenAccent),
+                        ),
                       ),
                     ],
                   ),

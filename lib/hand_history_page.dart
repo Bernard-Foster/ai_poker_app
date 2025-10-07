@@ -86,13 +86,19 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
           : Column(
               children: [
                 Builder(builder: (context) {
+                  final screenHeight = MediaQuery.of(context).size.height;
                   // For now, let's just display the info for the first hand.
                   final gameState = _parser?.parseHand(0);
-                  return GameBoardWidget(
-                      gameId: gameState?.gameId,
-                      buttonSeat: gameState?.buttonSeat,
-                      players: gameState?.players,
-                      bets: gameState?.bets);
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: screenHeight * 0.4,
+                    ),
+                    child: GameBoardWidget(
+                        gameId: gameState?.gameId,
+                        buttonSeat: gameState?.buttonSeat,
+                        players: gameState?.players,
+                        bets: gameState?.bets),
+                  );
                 }),
                 const Divider(height: 1),
                 Padding(

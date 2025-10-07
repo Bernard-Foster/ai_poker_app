@@ -10,6 +10,27 @@ class Card {
 
   const Card({required this.suit, required this.rank});
 
+  factory Card.fromString(String cardStr) {
+    if (cardStr.length != 2) {
+      throw ArgumentError('Card string must be 2 characters long: $cardStr');
+    }
+
+    final rankChar = cardStr[0];
+    final suitChar = cardStr[1];
+
+    final rank = Rank.values.firstWhere(
+      (r) => Card(suit: Suit.spades, rank: r).rankString == rankChar,
+      orElse: () => throw ArgumentError('Invalid rank character: $rankChar'),
+    );
+
+    final suit = Suit.values.firstWhere(
+      (s) => Card(suit: s, rank: Rank.ace).serverSuitString == suitChar,
+      orElse: () => throw ArgumentError('Invalid suit character: $suitChar'),
+    );
+
+    return Card(suit: suit, rank: rank);
+  }
+
   String get rankString {
     switch (rank) {
       case Rank.two: return '2';

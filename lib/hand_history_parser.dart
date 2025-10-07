@@ -1,9 +1,12 @@
+import 'package:poker_app/poker_card.dart';
+
 class Player {
   final int seat;
   final String name;
   final int stack;
+  final List<Card> holeCards;
 
-  Player({required this.seat, required this.name, required this.stack});
+  Player({required this.seat, required this.name, required this.stack, this.holeCards = const []});
 
   @override
   String toString() {
@@ -58,24 +61,44 @@ class HandHistoryParser {
     if (gameIdMatch == null) return null;
     final gameId = 'Game #${gameIdMatch.group(1)!}';
 
-    // 2. Parse Players and their stacks
-    final List<Player> players = [];
+    // 2. Parse initial player list (seat, name, stack)
+    final List<Player> initialPlayers = [];
     // This regex finds the block of "Seat X: ..." lines that appears at the start of a hand.
     final seatBlockRegex = RegExp(r'Seat \d+: .* \(.*\)\s*(?=Seat \d+:|\n\n|The button is at)');
     final seatMatches = seatBlockRegex.allMatches(handText);
 
     final playerRegex = RegExp(r'Seat (\d+): (.*) \((\d+) Tournament chips\)');
 
-    for (final match in seatMatches) {
-      final seatLine = match.group(0)!;
+    for (final seatMatch in seatMatches) {
+      final seatLine = seatMatch.group(0)!;
       final playerMatch = playerRegex.firstMatch(seatLine);
       if (playerMatch != null) {
         final seat = int.parse(playerMatch.group(1)!);
         final name = playerMatch.group(2)!;
         final stack = int.parse(playerMatch.group(3)!);
-        players.add(Player(seat: seat, name: name, stack: stack));
+        initialPlayers.add(Player(seat: seat, name: name, stack: stack));
       }
     }
+
+    // 3. Parse dealt cards
+    final Map<String, List<Card>> playerHoleCards = {};
+    final dealtCardsRegex = RegExp(r'Dealt to (.*) \[ (.*) \]');
+    final dealtMatches = dealtCardsRegex.allMatches(handText);
+
+    for (final dealtMatch in dealtMatches) {
+      final playerName = dealtMatch.group(1)!;
+      final cardsString = dealtMatch.group(2)!;
+      if (cardsString != '****') {
+        final cardStrings = cardsString.split(' ');
+        final cards = cardStrings.map((cs) => Card.fromString(cs)).toList();
+        playerHoleCards[playerName] = cards;
+      }
+    }
+
+    // 4. Combine initial player data with their hole cards
+    final List<Player> players = initialPlayers.map((p) {
+      return Player(seat: p.seat, name: p.name, stack: p.stack, holeCards: playerHoleCards[p.name] ?? []);
+    }).toList();
 
     // 3. Parse Button Position
     int? buttonSeat;
@@ -97,7 +120,7 @@ class HandHistoryParser {
 
       // Find the seat number for the player who posted the blind
       try {
-        final player = players.firstWhere((p) => p.name == playerName);
+        final player = initialPlayers.firstWhere((p) => p.name == playerName);
         bets.add(Bet(seat: player.seat, amount: amount));
       } catch (e) {
         // Player not found, might happen with inconsistent naming. Skip for now.

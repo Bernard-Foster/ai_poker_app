@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/material.dart' hide Card;
+import 'package:flutter/material.dart';
 import 'package:poker_app/hand_history_parser.dart';
 import 'package:poker_app/poker_card.dart';
 import 'package:poker_app/card_widget.dart';
@@ -25,9 +25,20 @@ class GameBoardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Make the table width responsive to the available space, maintaining an aspect ratio.
-        final double tableWidth = constraints.maxWidth * 0.9;
-        final double tableHeight = tableWidth * (200.0 / 350.0); // Maintain aspect ratio
+        // Determine the size of the table while respecting the aspect ratio and available space.
+        const double tableAspectRatio = 350.0 / 200.0;
+
+        // Calculate dimensions based on width first
+        double tableWidth = constraints.maxWidth * 0.675; // 25% smaller (0.9 * 0.75)
+        double tableHeight = tableWidth / tableAspectRatio;
+
+        // If the calculated height overflows the available height, recalculate based on height instead.
+        // This handles cases where the container is wide but not tall.
+        if (tableHeight > constraints.maxHeight * 0.675) { // 25% smaller (0.9 * 0.75)
+          tableHeight = constraints.maxHeight * 0.675;
+          tableWidth = tableHeight * tableAspectRatio;
+        }
+
         final double seatRadius = tableWidth / 14; // Scale seat size with table
 
         // The total width and height of the widget including seats
@@ -81,16 +92,24 @@ class GameBoardWidget extends StatelessWidget {
           return Positioned(
             // Adjust position to center the new player widget
             left: (totalWidth / 2) + x - (seatRadius * 1.5) + xOffset,
-            top: (totalHeight / 2) + y - (seatRadius * 1.2),
+            top: (totalHeight / 2) + y - (seatRadius * 1.5),
             child: Column(
               children: [
                 // Dummy Cards for the player
-                Row(
-                  children: [
-                    SizedBox(width: seatRadius * 0.7, height: seatRadius, child: CardWidget(card: Card(suit: Suit.clubs, rank: Rank.ace))),
-                    SizedBox(width: seatRadius * 0.7, height: seatRadius, child: CardWidget(card: Card(suit: Suit.spades, rank: Rank.king))),
-                  ],
-                ),
+                if (player.holeCards.isNotEmpty)
+                  Row(
+                    children: player.holeCards
+                        .map((card) => SizedBox(width: seatRadius * 0.7, height: seatRadius, child: CardWidget(card: card)))
+                        .toList(),
+                  )
+                else
+                  // Show two face-down cards if hand is unknown
+                  Row(
+                    children: [
+                      SizedBox(width: seatRadius * 0.7, height: seatRadius, child: const CardWidget(isFaceDown: true)),
+                      SizedBox(width: seatRadius * 0.7, height: seatRadius, child: const CardWidget(isFaceDown: true)),
+                    ],
+                  ),
                 const SizedBox(height: 4),
                 // Player name and stack
                 Container(

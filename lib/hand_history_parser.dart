@@ -5,8 +5,9 @@ class Player {
   final String name;
   final int stack;
   final List<Card> holeCards;
+  final bool isActive;
 
-  Player({required this.seat, required this.name, required this.stack, this.holeCards = const []});
+  Player({required this.seat, required this.name, required this.stack, this.holeCards = const [], this.isActive = true});
 
   @override
   String toString() {
@@ -80,13 +81,17 @@ class HandHistoryParser {
       }
     }
 
-    // 3. Parse dealt cards
+    // 3. Determine active players and parse their dealt cards
+    final Set<String> activePlayerNames = {};
     final Map<String, List<Card>> playerHoleCards = {};
     final dealtCardsRegex = RegExp(r'Dealt to (.*) \[ (.*) \]');
     final dealtMatches = dealtCardsRegex.allMatches(handText);
 
     for (final dealtMatch in dealtMatches) {
       final playerName = dealtMatch.group(1)!;
+      // Any player who is dealt cards is considered active for the start of the hand.
+      activePlayerNames.add(playerName);
+
       final cardsString = dealtMatch.group(2)!;
       if (cardsString != '****') {
         final cardStrings = cardsString.split(' ');
@@ -95,12 +100,18 @@ class HandHistoryParser {
       }
     }
 
-    // 4. Combine initial player data with their hole cards
+    // 4. Combine all data to create the final player list
     final List<Player> players = initialPlayers.map((p) {
-      return Player(seat: p.seat, name: p.name, stack: p.stack, holeCards: playerHoleCards[p.name] ?? []);
+      final isActive = activePlayerNames.contains(p.name);
+      return Player(
+          seat: p.seat,
+          name: p.name,
+          stack: p.stack,
+          holeCards: isActive ? (playerHoleCards[p.name] ?? []) : [],
+          isActive: isActive);
     }).toList();
 
-    // 3. Parse Button Position
+    // 5. Parse Button Position
     int? buttonSeat;
     // The "moved to" line indicates the button for the current hand.
     final buttonRegex = RegExp(r'The button is moved to seat (\d+)\.');
@@ -109,7 +120,7 @@ class HandHistoryParser {
       buttonSeat = int.parse(buttonMatch.group(1)!);
     }
 
-    // 4. Parse Blinds
+    // 6. Parse Blinds
     final List<Bet> bets = [];
     final blindRegex = RegExp(r'^(.*) posts the (small|big) blind \[(\d+) Tournament chips\]', multiLine: true);
     final blindMatches = blindRegex.allMatches(handText);

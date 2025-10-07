@@ -93,56 +93,62 @@ class GameBoardWidget extends StatelessWidget {
             // Adjust position to center the new player widget
             left: (totalWidth / 2) + x - (seatRadius * 1.5) + xOffset,
             top: (totalHeight / 2) + y - (seatRadius * 1.5),
-            child: Column(
-              children: [
-                // Dummy Cards for the player
-                if (player.holeCards.isNotEmpty)
-                  Row(
-                    children: player.holeCards
-                        .map((card) => SizedBox(width: seatRadius * 0.7, height: seatRadius, child: CardWidget(card: card)))
-                        .toList(),
-                  )
-                else
-                  // Show two face-down cards if hand is unknown
-                  Row(
-                    children: [
-                      SizedBox(width: seatRadius * 0.7, height: seatRadius, child: const CardWidget(isFaceDown: true)),
-                      SizedBox(width: seatRadius * 0.7, height: seatRadius, child: const CardWidget(isFaceDown: true)),
-                    ],
+            child: Opacity(
+              opacity: player.isActive ? 1.0 : 0.5,
+              child: Column(
+                children: [
+                  // Card display area
+                  SizedBox(
+                    height: seatRadius, // Reserve space for cards
+                    child: player.isActive
+                        ? Row(
+                            children: player.holeCards.isNotEmpty
+                                // Player has known cards
+                                ? player.holeCards
+                                    .map((card) => SizedBox(width: seatRadius * 0.7, height: seatRadius, child: CardWidget(card: card)))
+                                    .toList()
+                                // Player is active, but cards are unknown (face-down)
+                                : [
+                                    SizedBox(width: seatRadius * 0.7, height: seatRadius, child: const CardWidget(isFaceDown: true)),
+                                    SizedBox(width: seatRadius * 0.7, height: seatRadius, child: const CardWidget(isFaceDown: true)),
+                                  ],
+                          )
+                        : null, // Inactive players show no cards
                   ),
-                const SizedBox(height: 4),
-                // Player name and stack
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  constraints: BoxConstraints(maxWidth: seatRadius * 2.5),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.grey.shade600, width: 1),
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 14, // Give a specific height for the FittedBox to work within
-                        child: FittedBox(
-                          fit: BoxFit.contain,
-                          child: Text(
-                            player.name,
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 4),
+                  // Player name and stack
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    constraints: BoxConstraints(maxWidth: seatRadius * 2.5),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Colors.grey.shade600, width: 1),
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 14, // Give a specific height for the FittedBox to work within
+                          child: FittedBox(
+                            fit: BoxFit.contain,
+                            child: Text(
+                              player.name,
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
-                      ),
-                      FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text(
-                          player.stack.toString(),
-                          style: const TextStyle(color: Colors.greenAccent),
+                        FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            player.stack.toString(),
+                            style: const TextStyle(color: Colors.greenAccent),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         });
@@ -203,7 +209,7 @@ class GameBoardWidget extends StatelessWidget {
               Positioned(
                 left: (totalWidth / 2) + x - (betWidgetSize / 2),
                 top: (totalHeight / 2) + y - (betWidgetSize / 2),
-                child: SizedBox(width: betWidgetSize, height: betWidgetSize * 2.5, child: ChipStackWidget(amount: bet.amount, chipDiameter: betWidgetSize)),
+                child: SizedBox(width: betWidgetSize, height: betWidgetSize * 3.0, child: ChipStackWidget(amount: bet.amount, chipDiameter: betWidgetSize)),
               ),
             );
           }

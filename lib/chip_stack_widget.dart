@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart' hide Chip;
-import 'package:poker_app/chip_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:poker_app/chip_widget.dart' as custom;
 
 class ChipStackWidget extends StatelessWidget {
   final int amount;
@@ -8,13 +8,13 @@ class ChipStackWidget extends StatelessWidget {
   const ChipStackWidget({super.key, required this.amount, this.chipDiameter = 50});
 
   // Standard chip denominations
-  static const List<Chip> chipDenominations = [
-    Chip(value: 1000, color: Colors.orange, stripeColor: Colors.black),
-    Chip(value: 500, color: Colors.purple, stripeColor: Colors.white),
-    Chip(value: 100, color: Colors.black, stripeColor: Colors.white),
-    Chip(value: 25, color: Colors.green, stripeColor: Colors.white),
-    Chip(value: 5, color: Colors.red, stripeColor: Colors.white),
-    Chip(value: 1, color: Colors.white, stripeColor: Colors.blue),
+  static const List<custom.Chip> chipDenominations = [
+    custom.Chip(value: 1000, color: Colors.orange, stripeColor: Colors.black),
+    custom.Chip(value: 500, color: Colors.purple, stripeColor: Colors.white),
+    custom.Chip(value: 100, color: Colors.black, stripeColor: Colors.white),
+    custom.Chip(value: 25, color: Colors.green, stripeColor: Colors.white),
+    custom.Chip(value: 5, color: Colors.red, stripeColor: Colors.white),
+    custom.Chip(value: 1, color: Colors.white, stripeColor: Colors.blue),
   ];
 
   @override
@@ -35,8 +35,8 @@ class ChipStackWidget extends StatelessWidget {
             children: List.generate(chipsToRender.length, (index) {
               final chip = chipsToRender[index];
               return Positioned(
-                bottom: index * chipHeight,
-                child: ChipWidget(chip: chip, diameter: chipDiameter),
+                bottom: index * chipHeight, // Stacks chips vertically
+                child: custom.ChipWidget(chip: chip, diameter: chipDiameter),
               );
             }),
           ),
@@ -47,8 +47,8 @@ class ChipStackWidget extends StatelessWidget {
   }
 
   // Calculates the list of chips to represent the total amount.
-  List<Chip> _calculateChips(int totalAmount) {
-    List<Chip> chips = [];
+  List<custom.Chip> _calculateChips(int totalAmount) {
+    List<custom.Chip> chips = [];
     int remainingAmount = totalAmount;
 
     for (final denomination in chipDenominations) {

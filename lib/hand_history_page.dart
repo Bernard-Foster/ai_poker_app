@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:file_picker/file_picker.dart';
 import 'package:poker_app/hand_history_parser.dart';
@@ -18,6 +18,9 @@ class HandHistoryPage extends StatefulWidget {
 class _HandHistoryPageState extends State<HandHistoryPage> {
   String? _handHistoryText;
   HandHistoryParser? _parser;
+  int _currentHandIndex = 0;
+  int _currentActionIndex = -1; // -1 represents the initial state before any actions
+  GameState? _currentGameState;
 
   Future<void> _pickFile() async {
     // Use file_picker to open the file explorer
@@ -48,6 +51,7 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
         setState(() {
           _handHistoryText = contents;
           _parser = HandHistoryParser(contents);
+          _updateGameState();
         });
       } catch (e) {
         setState(() => _handHistoryText = 'Error reading file: $e');
@@ -55,6 +59,67 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
     } else {
       // User canceled the picker
     }
+  }
+
+  void _updateGameState() {
+    if (_parser == null) return;
+
+    final baseGameState = _parser!.parseHand(_currentHandIndex);
+    if (baseGameState == null) return;
+
+    // Create a new state by applying actions up to the current index
+    final activeActions = _currentActionIndex >= 0
+        ? baseGameState.actions.sublist(0, _currentActionIndex + 1)
+        : <Action>[];
+
+    final Set<String> foldedPlayers = activeActions
+        .where((a) => a.type == ActionType.fold)
+        .map((a) => a.playerName)
+        .toSet();
+
+    final updatedPlayers = baseGameState.players.map((p) {
+      return Player(
+        seat: p.seat,
+        name: p.name,
+        stack: p.stack,
+        holeCards: p.holeCards,
+        isActive: p.isActive && !foldedPlayers.contains(p.name),
+      );
+    }).toList();
+
+    final currentBets = List<Bet>.from(baseGameState.bets);
+    for (final action in activeActions) {
+      if ((action.type == ActionType.call || action.type == ActionType.raise || action.type == ActionType.bet) && action.amount > 0) {
+        final player = updatedPlayers.firstWhere((p) => p.name == action.playerName);
+        currentBets.add(Bet(seat: player.seat, amount: action.amount));
+      }
+    }
+
+    setState(() {
+      _currentGameState = GameState(
+        gameId: baseGameState.gameId,
+        players: updatedPlayers,
+        buttonSeat: baseGameState.buttonSeat,
+        bets: currentBets,
+        actions: baseGameState.actions,
+      );
+    });
+  }
+
+  void _nextMove() {
+    if (_currentGameState == null || _currentActionIndex >= _currentGameState!.actions.length - 1) return;
+    setState(() {
+      _currentActionIndex++;
+      _updateGameState();
+    });
+  }
+
+  void _prevMove() {
+    if (_currentGameState == null || _currentActionIndex < 0) return;
+    setState(() {
+      _currentActionIndex--;
+      _updateGameState();
+    });
   }
 
   @override
@@ -87,17 +152,15 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
               children: [
                 Builder(builder: (context) {
                   final screenHeight = MediaQuery.of(context).size.height;
-                  // For now, let's just display the info for the first hand.
-                  final gameState = _parser?.parseHand(0);
                   return ConstrainedBox(
                     constraints: BoxConstraints(
                       maxHeight: screenHeight * 0.4,
                     ),
                     child: GameBoardWidget(
-                        gameId: gameState?.gameId,
-                        buttonSeat: gameState?.buttonSeat,
-                        players: gameState?.players,
-                        bets: gameState?.bets),
+                        gameId: _currentGameState?.gameId,
+                        buttonSeat: _currentGameState?.buttonSeat,
+                        players: _currentGameState?.players,
+                        bets: _currentGameState?.bets),
                   );
                 }),
                 const Divider(height: 1),
@@ -109,22 +172,22 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
                     runSpacing: 8.0,
                     children: [
                       ElevatedButton.icon(
-                        onPressed: null, // Dummy button
+                        onPressed: null, // TODO: Implement
                         icon: const Icon(Icons.skip_previous),
                         label: const Text('Last Hand'),
                       ),
                       ElevatedButton.icon(
-                        onPressed: null, // Dummy button
+                        onPressed: _prevMove,
                         icon: const Icon(Icons.fast_rewind),
                         label: const Text('Prev Move'),
                       ),
                       ElevatedButton.icon(
-                        onPressed: null, // Dummy button
+                        onPressed: _nextMove,
                         icon: const Icon(Icons.fast_forward),
                         label: const Text('Next Move'),
                       ),
-                      ElevatedButton.icon(
-                        onPressed: null, // Dummy button
+                      ElevatedButton.icon( // TODO: Implement
+                        onPressed: null,
                         icon: const Icon(Icons.skip_next),
                         label: const Text('Next Hand'),
                       ),

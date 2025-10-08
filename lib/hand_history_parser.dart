@@ -11,7 +11,7 @@ class Player {
 
   @override
   String toString() {
-    return 'Player(seat: $seat, name: $name, stack: $stack)';
+    return 'Player(seat: $seat, name: $name, stack: $stack, isActive: $isActive, cards: [${holeCards.map((c) => c.toServerString()).join(', ')}])';
   }
 }
 
@@ -20,6 +20,26 @@ class Bet {
   final int amount;
 
   Bet({required this.seat, required this.amount});
+
+  @override
+  String toString() {
+    return 'Bet(seat: $seat, amount: $amount)';
+  }
+}
+
+enum ActionType { fold, check, call, bet, raise }
+
+class Action {
+  final String playerName;
+  final ActionType type;
+  final int amount;
+
+  Action({required this.playerName, required this.type, this.amount = 0});
+
+  @override
+  String toString() {
+    return 'Action(player: $playerName, type: $type, amount: $amount)';
+  }
 }
 
 class GameState {
@@ -27,9 +47,31 @@ class GameState {
   final List<Player> players;
   final int? buttonSeat;
   final List<Bet> bets;
+  final List<Action> actions;
   // ... other properties like button position, actions, etc. will be added later
 
-  GameState({required this.gameId, required this.players, this.buttonSeat, this.bets = const []});
+  GameState({
+    required this.gameId,
+    required this.players,
+    this.buttonSeat,
+    this.bets = const [],
+    this.actions = const [],
+  });
+
+  @override
+  String toString() {
+    final playersString = players.map((p) => '    $p').join(',\n');
+    final betsString = bets.map((b) => '    $b').join(',\n');
+    final actionsString = actions.map((a) => '    $a').join(',\n');
+    return '''
+GameState(
+  gameId: $gameId,
+  buttonSeat: $buttonSeat,
+  players: [\n$playersString\n  ],
+  bets: [\n$betsString\n  ],
+  actions: [\n$actionsString\n  ]
+)''';
+  }
 }
 
 class HandHistoryParser {
@@ -139,7 +181,40 @@ class HandHistoryParser {
       }
     }
 
+    // 7. Parse Pre-flop Actions
+    final List<Action> actions = [];
+    final preFlopEndIndex = handText.indexOf('** Dealing Flop **');
+    final actionText = preFlopEndIndex != -1 ? handText.substring(0, preFlopEndIndex) : handText;
 
-    return GameState(gameId: gameId, players: players, buttonSeat: buttonSeat, bets: bets);
+    final actionLines = actionText.split('\n');
+    final actionRegex = RegExp(r'^(.*?)(?: (folds|checks)| (calls|bets for|raises) \[?(\d+) Tournament chips\]?)');
+
+    for (final line in actionLines) {
+      final match = actionRegex.firstMatch(line.trim());
+      if (match != null) {
+        final playerName = match.group(1)!;
+        final actionString = match.group(2) ?? match.group(3)!;
+        final amountString = match.group(4);
+
+        ActionType? type;
+        switch (actionString) {
+          case 'folds': type = ActionType.fold; break;
+          case 'checks': type = ActionType.check; break;
+          case 'calls': type = ActionType.call; break;
+          case 'bets for': type = ActionType.bet; break;
+          case 'raises': type = ActionType.raise; break;
+        }
+
+        if (type != null) {
+          actions.add(Action(
+            playerName: playerName,
+            type: type,
+            amount: amountString != null ? int.parse(amountString) : 0,
+          ));
+        }
+      }
+    }
+
+    return GameState(gameId: gameId, players: players, buttonSeat: buttonSeat, bets: bets, actions: actions);
   }
 }

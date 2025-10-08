@@ -46,6 +46,8 @@ class GameBoardWidget extends StatelessWidget {
         return 'BET';
       case parser.ActionType.raise:
         return 'RAISE';
+      case parser.ActionType.uncalledBet:
+        return 'RETURNED';
       default:
         return '';
     }

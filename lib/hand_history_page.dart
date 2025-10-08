@@ -87,6 +87,9 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
         .map((a) => a.playerName)
         .toSet();
 
+    // Create a mutable map of players to update their cards at showdown
+    final Map<String, parser.Player> playerMap = {for (var p in baseGameState.players) p.name: p};
+
     // Process actions sequentially to build the current state
     int accumulatedPot = 0;
     Map<int, int> currentStreetBets = {};
@@ -113,22 +116,37 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
       } else if (currentAction.type == parser.ActionType.call || currentAction.type == parser.ActionType.raise || currentAction.type == parser.ActionType.bet) {
         final player = baseGameState.players.firstWhere((p) => p.name == currentAction.playerName);
         currentStreetBets[player.seat] = currentAction.amount;
+      } else if (currentAction.type == parser.ActionType.showCards) {
+        // Update the player's hole cards when they are shown
+        final showingPlayer = playerMap[currentAction.playerName];
+        if (showingPlayer != null) {
+          playerMap[currentAction.playerName] = parser.Player(
+              seat: showingPlayer.seat,
+              name: showingPlayer.name,
+              stack: showingPlayer.stack,
+              holeCards: currentAction.cards, // The revealed cards
+              isActive: showingPlayer.isActive);
+        }
+      } else if (currentAction.type == parser.ActionType.uncalledBet) {
+        final player = baseGameState.players.firstWhere((p) => p.name == currentAction.playerName);
+        // Subtract the returned amount from the player's bet for this street
+        currentStreetBets.update(player.seat, (value) => value - currentAction.amount, ifAbsent: () => 0);
       }
     }
 
-    final updatedPlayers = baseGameState.players.map((p) {
+    final updatedPlayers = playerMap.values.map((p) {
       return parser.Player(
         seat: p.seat,
         name: p.name,
         stack: p.stack,
         holeCards: p.holeCards,
-        isActive: p.isActive && !foldedPlayers.contains(p.name),
+        isActive: p.isActive && !foldedPlayers.contains(p.name), // Keep isActive logic
       );
     }).toList();
 
     final currentBetsOnTable = currentStreetBets.entries.map((e) => parser.Bet(seat: e.key, amount: e.value)).toList();
     final totalPotOnTable = accumulatedPot + currentStreetBets.values.fold(0, (a, b) => a + b);
-    final pots = totalPotOnTable > 0 ? [parser.Pot(amount: totalPotOnTable as int)] : <parser.Pot>[]; // we need to parse int from num
+    final pots = totalPotOnTable > 0 ? [parser.Pot(amount: totalPotOnTable as int)] : <parser.Pot>[];
 
     setState(() {
       _currentGameState = parser.GameState(

@@ -28,14 +28,15 @@ class Bet {
   }
 }
 
-enum ActionType { fold, check, call, bet, raise, dealFlop, dealTurn, dealRiver }
+enum ActionType { fold, check, call, bet, raise, dealFlop, dealTurn, dealRiver, uncalledBet, showCards }
 
 class Action {
   final String playerName;
   final ActionType type;
   final int amount;
+  final List<Card> cards;
 
-  Action({required this.playerName, required this.type, this.amount = 0});
+  Action({required this.playerName, required this.type, this.amount = 0, this.cards = const []});
 
   @override
   String toString() {
@@ -126,9 +127,13 @@ class HandHistoryParser {
 
     // 2. Parse initial player list (seat, name, stack)
     final List<Player> initialPlayers = [];
-    // This regex finds the block of "Seat X: ..." lines that appears at the start of a hand.
-    final seatBlockRegex = RegExp(r'Seat \d+: .* \(.*\)\s*(?=Seat \d+:|\n\n|The button is at)');
-    final seatMatches = seatBlockRegex.allMatches(handText);
+    // Define a boundary to stop searching for initial seats. This can be the first action.
+    final seatBlockEndIndex = handText.indexOf(RegExp(r'posts the (small|big) blind'));
+    final seatBlockText = seatBlockEndIndex != -1 ? handText.substring(0, seatBlockEndIndex) : handText;
+
+    // This regex now only searches within the initial block of text.
+    final seatBlockRegex = RegExp(r'^Seat \d+: .* \(.*\)', multiLine: true);
+    final seatMatches = seatBlockRegex.allMatches(seatBlockText);
 
     final playerRegex = RegExp(r'Seat (\d+): (.*) \((\d+) Tournament chips\)');
 
@@ -207,11 +212,15 @@ class HandHistoryParser {
 
     final actionRegex = RegExp(r'^(.*?)(?: (folds|checks)| (calls|bets for|raises) \[?(\d+) Tournament chips\]?)');
     final dealRegex = RegExp(r'\*\* Dealing (Flop|Turn|River) \*\* \[ (.*) \]');
+    final uncalledBetRegex = RegExp(r'^(.*?) is returned (\d+) Tournament chips \(uncalled\)\.');
+    final showsCardsRegex = RegExp(r'^(.*?) shows \[ (.*) \]');
 
     for (final line in actionLines) {
       final trimmedLine = line.trim();
       final actionMatch = actionRegex.firstMatch(trimmedLine);
       final dealMatch = dealRegex.firstMatch(trimmedLine);
+      final uncalledBetMatch = uncalledBetRegex.firstMatch(trimmedLine);
+      final showsCardsMatch = showsCardsRegex.firstMatch(trimmedLine);
 
       if (dealMatch != null) {
         final street = dealMatch.group(1)!;
@@ -222,6 +231,19 @@ class HandHistoryParser {
         if (type != null) {
           actions.add(Action(playerName: '', type: type));
         }
+      } else if (uncalledBetMatch != null) {
+        actions.add(Action(
+          playerName: uncalledBetMatch.group(1)!,
+          type: ActionType.uncalledBet,
+          amount: int.parse(uncalledBetMatch.group(2)!),
+        ));
+      } else if (showsCardsMatch != null) {
+        final cardStrings = showsCardsMatch.group(2)!.split(' ');
+        actions.add(Action(
+          playerName: showsCardsMatch.group(1)!,
+          type: ActionType.showCards,
+          cards: cardStrings.map((cs) => Card.fromString(cs)).toList(),
+        ));
       } else if (actionMatch != null) {
         final playerName = actionMatch.group(1)!;
         final actionString = actionMatch.group(2) ?? actionMatch.group(3)!;

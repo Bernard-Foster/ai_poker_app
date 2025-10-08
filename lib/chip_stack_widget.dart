@@ -41,7 +41,7 @@ class ChipStackWidget extends StatelessWidget {
             }),
           ),
         ),
-        Text(amount.toString(), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold, shadows: [Shadow(blurRadius: 2)])),
+        Text(amount.toString(), style: TextStyle(color: Colors.white, fontSize: chipDiameter * 0.3, fontWeight: FontWeight.bold, shadows: const [Shadow(blurRadius: 2)])),
       ],
     );
   }

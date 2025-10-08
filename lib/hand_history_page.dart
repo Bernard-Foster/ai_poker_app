@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:file_picker/file_picker.dart';
 import 'package:poker_app/hand_history_parser.dart' as parser;
 import 'package:poker_app/game_board_widget.dart';
-import 'package:poker_app/poker_card.dart' as parser;
 
 class HandHistoryPage extends StatefulWidget {
   const HandHistoryPage({super.key, required this.title});
@@ -16,12 +16,21 @@ class HandHistoryPage extends StatefulWidget {
   State<HandHistoryPage> createState() => _HandHistoryPageState();
 }
 
+class _LastActionInfo {
+  final String playerName;
+  final parser.ActionType actionType;
+
+  _LastActionInfo(this.playerName, this.actionType);
+}
+
 class _HandHistoryPageState extends State<HandHistoryPage> {
   String? _handHistoryText;
   parser.HandHistoryParser? _parser;
   int _currentHandIndex = 0;
   int _currentActionIndex = -1; // -1 represents the initial state before any actions
   parser.GameState? _currentGameState;
+  _LastActionInfo? _lastActionInfo;
+  Timer? _actionBillboardTimer;
 
   Future<void> _pickFile() async {
     // Use file_picker to open the file explorer
@@ -119,7 +128,7 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
 
     final currentBetsOnTable = currentStreetBets.entries.map((e) => parser.Bet(seat: e.key, amount: e.value)).toList();
     final totalPotOnTable = accumulatedPot + currentStreetBets.values.fold(0, (a, b) => a + b);
-    final pots = totalPotOnTable > 0 ? [parser.Pot(amount: totalPotOnTable as int)] : <parser.Pot>[];
+    final pots = totalPotOnTable > 0 ? [parser.Pot(amount: totalPotOnTable as int)] : <parser.Pot>[]; // we need to parse int from num
 
     setState(() {
       _currentGameState = parser.GameState(
@@ -137,16 +146,42 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
 
   void _nextMove() {
     if (_currentGameState == null || _currentActionIndex >= _currentGameState!.actions.length - 1) return;
+
+    _actionBillboardTimer?.cancel();
+
     setState(() {
       _currentActionIndex++;
+      final lastAction = _currentGameState!.actions[_currentActionIndex];
+
+      // Set the info for the billboard, but only for player actions (not dealing cards)
+      if (lastAction.playerName.isNotEmpty) {
+        _lastActionInfo = _LastActionInfo(lastAction.playerName, lastAction.type);
+
+        // Set a timer to clear the billboard after 1 second
+        _actionBillboardTimer = Timer(const Duration(seconds: 1), () {
+          if (mounted) {
+            setState(() {
+              _lastActionInfo = null;
+            });
+          }
+        });
+      } else {
+        // If it's a dealing action, ensure no billboard is shown
+        _lastActionInfo = null;
+      }
+
       _updateGameState();
     });
   }
 
   void _prevMove() {
     if (_currentGameState == null || _currentActionIndex < 0) return;
+
+    _actionBillboardTimer?.cancel();
+
     setState(() {
       _currentActionIndex--;
+      _lastActionInfo = null; // Clear billboard when going backwards
       _updateGameState();
     });
   }
@@ -191,7 +226,8 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
                         players: _currentGameState?.players,
                         bets: _currentGameState?.bets,
                         pots: _currentGameState?.pots,
-                        communityCards: _currentGameState?.communityCards),
+                        communityCards: _currentGameState?.communityCards,
+                        lastAction: _lastActionInfo != null ? _lastActionInfo! : null),
                   );
                 }),
                 const Divider(height: 1),

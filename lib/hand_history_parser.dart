@@ -1,4 +1,5 @@
 import 'package:poker_app/poker_card.dart';
+export 'package:poker_app/poker_card.dart';
 
 class Player {
   final int seat;

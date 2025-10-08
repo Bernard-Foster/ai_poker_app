@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart' hide Card; // Needed to hide Card to avoid conflict with our Card class
-import 'package:poker_app/hand_history_parser.dart';
+import 'package:poker_app/hand_history_parser.dart' as parser;
 import 'package:poker_app/poker_card.dart';
 import 'package:poker_app/card_widget.dart';
 import 'package:poker_app/chip_stack_widget.dart';
@@ -9,10 +9,11 @@ class GameBoardWidget extends StatelessWidget {
   final int playerCount;
   final String? gameId;
   final int? buttonSeat;
-  final List<Player>? players;
-  final List<Bet>? bets;
-  final List<Pot>? pots;
+  final List<parser.Player>? players;
+  final List<parser.Bet>? bets;
+  final List<parser.Pot>? pots;
   final List<Card>? communityCards;
+  final dynamic lastAction; // Using dynamic to avoid import cycle if class is in page
 
   const GameBoardWidget({
     super.key,
@@ -23,7 +24,32 @@ class GameBoardWidget extends StatelessWidget {
     this.bets,
     this.pots,
     this.communityCards,
+    this.lastAction,
   });
+
+  String _truncatePlayerName(String name) {
+    if (name.length > 6) {
+      return '${name.substring(0, 6)}...';
+    }
+    return name;
+  }
+
+  String _formatActionType(parser.ActionType type) {
+    switch (type) {
+      case parser.ActionType.fold:
+        return 'FOLD';
+      case parser.ActionType.check:
+        return 'CHECK';
+      case parser.ActionType.call:
+        return 'CALL';
+      case parser.ActionType.bet:
+        return 'BET';
+      case parser.ActionType.raise:
+        return 'RAISE';
+      default:
+        return '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +79,7 @@ class GameBoardWidget extends StatelessWidget {
         final List<Widget> playerSeats = List.generate(playerCount, (index) {
           // Find the player for the current seat index. Seat numbers are 1-based.
           final seatNumber = index;
-          Player? player;
+          parser.Player? player;
           try {
             player = players?.firstWhere((p) => p.seat == seatNumber);
           } catch (e) {
@@ -92,6 +118,60 @@ class GameBoardWidget extends StatelessWidget {
             );
           }
 
+          // Check if this player has the most recent action to display the billboard
+          final bool showActionBillboard = lastAction != null && lastAction.playerName == player.name;
+
+          Widget playerInfoWidget;
+          if (showActionBillboard) {
+            playerInfoWidget = Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              constraints: BoxConstraints(minWidth: seatRadius * 2.5, minHeight: 36),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade800.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.lightBlueAccent, width: 1.5),
+              ),
+              child: Center(
+                child: Text(
+                  _formatActionType(lastAction.actionType),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+              ),
+            );
+          } else {
+            // Default player name and stack widget
+            playerInfoWidget = Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              constraints: BoxConstraints(maxWidth: seatRadius * 2.5),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.grey.shade600, width: 1),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 14, // Give a specific height for the FittedBox to work within
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(
+                        _truncatePlayerName(player.name),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  FittedBox(
+                    fit: BoxFit.contain,
+                    child: Text(
+                      player.stack.toString(),
+                      style: const TextStyle(color: Colors.greenAccent),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
           // If a player is at the seat, show their info and cards.
           return Positioned(
             // Adjust position to center the new player widget
@@ -120,37 +200,7 @@ class GameBoardWidget extends StatelessWidget {
                         : null, // Inactive players show no cards
                   ),
                   const SizedBox(height: 4),
-                  // Player name and stack
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    constraints: BoxConstraints(maxWidth: seatRadius * 2.5),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey.shade600, width: 1),
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 14, // Give a specific height for the FittedBox to work within
-                          child: FittedBox(
-                            fit: BoxFit.contain,
-                            child: Text(
-                              player.name,
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        FittedBox(
-                          fit: BoxFit.contain,
-                          child: Text(
-                            player.stack.toString(),
-                            style: const TextStyle(color: Colors.greenAccent),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  playerInfoWidget,
                 ],
               ),
             ),
@@ -230,7 +280,7 @@ class GameBoardWidget extends StatelessWidget {
           potWidgets.add(
             Positioned(
               left: (totalWidth / 2) - (potWidgetSize / 2),
-              top: (totalHeight / 2) - (potWidgetSize * 1.5), // Adjust vertical position
+              top: (totalHeight / 2) - (potWidgetSize * 1.5) + 20, // Shifted down 20px
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -254,7 +304,7 @@ class GameBoardWidget extends StatelessWidget {
           communityCardWidgets.add(
             Positioned(
               left: (totalWidth / 2) - (totalCardWidth / 2),
-              top: (totalHeight / 2) - (cardHeight / 2),
+              top: (totalHeight / 2) - (cardHeight / 2) - (tableHeight * 0.2), // Raised to top half
               child: Row(
                 children: communityCards!
                     .map((card) => SizedBox(width: cardWidth, height: cardHeight, child: CardWidget(card: card)))
@@ -284,13 +334,14 @@ class GameBoardWidget extends StatelessWidget {
                         border: Border.all(color: Colors.brown.shade800, width: 10),
                       ),
                       child: gameId != null
-                          ? Center(
-                              child: Text(
-                                gameId!,
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                        ? Align(
+                            alignment: const Alignment(0.0, 0.6), // Positioned in the bottom third
+                            child: Text(
+                              gameId!,
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.6),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
                                 ),
                               ),
                             )

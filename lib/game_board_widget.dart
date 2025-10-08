@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Card; // Needed to hide Card to avoid conflict with our Card class
 import 'package:poker_app/hand_history_parser.dart';
 import 'package:poker_app/poker_card.dart';
 import 'package:poker_app/card_widget.dart';
@@ -11,6 +11,8 @@ class GameBoardWidget extends StatelessWidget {
   final int? buttonSeat;
   final List<Player>? players;
   final List<Bet>? bets;
+  final List<Pot>? pots;
+  final List<Card>? communityCards;
 
   const GameBoardWidget({
     super.key,
@@ -19,6 +21,8 @@ class GameBoardWidget extends StatelessWidget {
     this.buttonSeat = 1, // Default to seat 1
     this.players,
     this.bets,
+    this.pots,
+    this.communityCards,
   });
 
   @override
@@ -215,42 +219,92 @@ class GameBoardWidget extends StatelessWidget {
           }
         }
 
+        // Generate pot widgets
+        final List<Widget> potWidgets = [];
+        if (pots != null && pots!.isNotEmpty) {
+          // For now, display a single pot in the center.
+          // This can be expanded to lay out multiple side pots.
+          final totalPot = pots!.fold<int>(0, (sum, pot) => sum + pot.amount);
+          final double potWidgetSize = seatRadius * 0.75; // 50% smaller
+
+          potWidgets.add(
+            Positioned(
+              left: (totalWidth / 2) - (potWidgetSize / 2),
+              top: (totalHeight / 2) - (potWidgetSize * 1.5), // Adjust vertical position
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ChipStackWidget(
+                    amount: totalPot,
+                    chipDiameter: potWidgetSize,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        // Generate community card widgets
+        final List<Widget> communityCardWidgets = [];
+        if (communityCards != null && communityCards!.isNotEmpty) {
+          final double cardWidth = seatRadius * 1.2;
+          final double cardHeight = cardWidth * 1.4;
+          final double totalCardWidth = communityCards!.length * cardWidth + (communityCards!.length - 1) * 4;
+
+          communityCardWidgets.add(
+            Positioned(
+              left: (totalWidth / 2) - (totalCardWidth / 2),
+              top: (totalHeight / 2) - (cardHeight / 2),
+              child: Row(
+                children: communityCards!
+                    .map((card) => SizedBox(width: cardWidth, height: cardHeight, child: CardWidget(card: card)))
+                    .toList(),
+              ),
+            ),
+          );
+        }
+
         return Center(
           child: Container(
             width: totalWidth,
             height: totalHeight,
-            margin: const EdgeInsets.symmetric(vertical: 20.0),
-            child: Stack(
-              children: [
-                // The table itself
-                Center(
-                  child: Container(
-                    width: tableWidth,
-                    height: tableHeight,
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade800,
-                      borderRadius: BorderRadius.circular(tableHeight / 2), // Oval shape
-                      border: Border.all(color: Colors.brown.shade800, width: 10),
-                    ),
-                    child: gameId != null
-                        ? Center(
-                            child: Text(
-                              gameId!,
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.6),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
+            margin: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Transform.translate(
+              offset: const Offset(0, -6), // Apply a 6px upward offset
+              child: Stack(
+                children: [
+                  // The table itself
+                  Center(
+                    child: Container(
+                      width: tableWidth,
+                      height: tableHeight,
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade800,
+                        borderRadius: BorderRadius.circular(tableHeight / 2), // Oval shape
+                        border: Border.all(color: Colors.brown.shade800, width: 10),
+                      ),
+                      child: gameId != null
+                          ? Center(
+                              child: Text(
+                                gameId!,
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.6),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
                               ),
-                            ),
-                          )
-                        : null,
+                            )
+                          : null,
+                    ),
                   ),
-                ),
-                // The player seats overlaid on the table
-                ...playerSeats,
-                ...dealerButton,
-                ...betWidgets,
-              ],
+                  // The player seats overlaid on the table
+                  ...playerSeats,
+                  ...dealerButton,
+                  ...betWidgets,
+                  ...communityCardWidgets,
+                  ...potWidgets,
+                ],
+              ),
             ),
           ),
         );

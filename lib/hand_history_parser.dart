@@ -27,7 +27,7 @@ class Bet {
   }
 }
 
-enum ActionType { fold, check, call, bet, raise }
+enum ActionType { fold, check, call, bet, raise, dealFlop, dealTurn, dealRiver }
 
 class Action {
   final String playerName;
@@ -42,12 +42,25 @@ class Action {
   }
 }
 
+class Pot {
+  final int amount;
+  // In the future, we can add eligible players for side pots.
+  // final List<String> eligiblePlayers;
+
+  Pot({required this.amount});
+
+  @override
+  String toString() => 'Pot(amount: $amount)';
+}
+
 class GameState {
   final String gameId;
   final List<Player> players;
   final int? buttonSeat;
   final List<Bet> bets;
   final List<Action> actions;
+  final List<Pot> pots;
+  final List<Card> communityCards;
   // ... other properties like button position, actions, etc. will be added later
 
   GameState({
@@ -56,6 +69,8 @@ class GameState {
     this.buttonSeat,
     this.bets = const [],
     this.actions = const [],
+    this.pots = const [],
+    this.communityCards = const [],
   });
 
   @override
@@ -63,13 +78,17 @@ class GameState {
     final playersString = players.map((p) => '    $p').join(',\n');
     final betsString = bets.map((b) => '    $b').join(',\n');
     final actionsString = actions.map((a) => '    $a').join(',\n');
+    final potsString = pots.map((p) => '    $p').join(',\n');
+    final communityCardsString = communityCards.map((c) => c.toServerString()).join(' ');
     return '''
 GameState(
   gameId: $gameId,
   buttonSeat: $buttonSeat,
   players: [\n$playersString\n  ],
   bets: [\n$betsString\n  ],
-  actions: [\n$actionsString\n  ]
+  actions: [\n$actionsString\n  ],
+  pots: [\n$potsString\n  ],
+  communityCards: [$communityCardsString]
 )''';
   }
 }
@@ -181,21 +200,31 @@ class HandHistoryParser {
       }
     }
 
-    // 7. Parse Pre-flop Actions
+    // 7. Parse all actions and street changes
     final List<Action> actions = [];
-    final preFlopEndIndex = handText.indexOf('** Dealing Flop **');
-    final actionText = preFlopEndIndex != -1 ? handText.substring(0, preFlopEndIndex) : handText;
+    final actionLines = handText.split('\n');
 
-    final actionLines = actionText.split('\n');
     final actionRegex = RegExp(r'^(.*?)(?: (folds|checks)| (calls|bets for|raises) \[?(\d+) Tournament chips\]?)');
+    final dealRegex = RegExp(r'\*\* Dealing (Flop|Turn|River) \*\* \[ (.*) \]');
 
     for (final line in actionLines) {
-      final match = actionRegex.firstMatch(line.trim());
-      if (match != null) {
-        final playerName = match.group(1)!;
-        final actionString = match.group(2) ?? match.group(3)!;
-        final amountString = match.group(4);
+      final trimmedLine = line.trim();
+      final actionMatch = actionRegex.firstMatch(trimmedLine);
+      final dealMatch = dealRegex.firstMatch(trimmedLine);
 
+      if (dealMatch != null) {
+        final street = dealMatch.group(1)!;
+        ActionType? type;
+        if (street == 'Flop') type = ActionType.dealFlop;
+        if (street == 'Turn') type = ActionType.dealTurn;
+        if (street == 'River') type = ActionType.dealRiver;
+        if (type != null) {
+          actions.add(Action(playerName: '', type: type));
+        }
+      } else if (actionMatch != null) {
+        final playerName = actionMatch.group(1)!;
+        final actionString = actionMatch.group(2) ?? actionMatch.group(3)!;
+        final amountString = actionMatch.group(4);
         ActionType? type;
         switch (actionString) {
           case 'folds': type = ActionType.fold; break;
@@ -204,7 +233,6 @@ class HandHistoryParser {
           case 'bets for': type = ActionType.bet; break;
           case 'raises': type = ActionType.raise; break;
         }
-
         if (type != null) {
           actions.add(Action(
             playerName: playerName,
@@ -215,6 +243,17 @@ class HandHistoryParser {
       }
     }
 
-    return GameState(gameId: gameId, players: players, buttonSeat: buttonSeat, bets: bets, actions: actions);
+    // 8. Parse final community cards state
+    final boardRegex = RegExp(r'board:\[ (.*)\]');
+    final boardMatch = boardRegex.allMatches(handText).lastOrNull;
+    final List<Card> communityCards = [];
+    if (boardMatch != null) {
+      final cardsString = boardMatch.group(1)!;
+      if (cardsString.isNotEmpty) {
+        communityCards.addAll(cardsString.split(' ').map((cs) => Card.fromString(cs)));
+      }
+    }
+
+    return GameState(gameId: gameId, players: players, buttonSeat: buttonSeat, bets: bets, actions: actions, pots: [], communityCards: communityCards);
   }
 }

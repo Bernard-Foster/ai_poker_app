@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart' hide Action;
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:file_picker/file_picker.dart';
-import 'package:poker_app/hand_history_parser.dart';
+import 'package:poker_app/hand_history_parser.dart' as parser;
 import 'package:poker_app/game_board_widget.dart';
+import 'package:poker_app/poker_card.dart' as parser;
 
 class HandHistoryPage extends StatefulWidget {
   const HandHistoryPage({super.key, required this.title});
@@ -17,10 +18,10 @@ class HandHistoryPage extends StatefulWidget {
 
 class _HandHistoryPageState extends State<HandHistoryPage> {
   String? _handHistoryText;
-  HandHistoryParser? _parser;
+  parser.HandHistoryParser? _parser;
   int _currentHandIndex = 0;
   int _currentActionIndex = -1; // -1 represents the initial state before any actions
-  GameState? _currentGameState;
+  parser.GameState? _currentGameState;
 
   Future<void> _pickFile() async {
     // Use file_picker to open the file explorer
@@ -50,7 +51,7 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
         }
         setState(() {
           _handHistoryText = contents;
-          _parser = HandHistoryParser(contents);
+          _parser = parser.HandHistoryParser(contents);
           _updateGameState();
         });
       } catch (e) {
@@ -70,15 +71,44 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
     // Create a new state by applying actions up to the current index
     final activeActions = _currentActionIndex >= 0
         ? baseGameState.actions.sublist(0, _currentActionIndex + 1)
-        : <Action>[];
+        : <parser.Action>[];
 
     final Set<String> foldedPlayers = activeActions
-        .where((a) => a.type == ActionType.fold)
+        .where((a) => a.type == parser.ActionType.fold)
         .map((a) => a.playerName)
         .toSet();
 
+    // Process actions sequentially to build the current state
+    int accumulatedPot = 0;
+    Map<int, int> currentStreetBets = {};
+    List<parser.Card> visibleCommunityCards = [];
+
+    // Start with blinds as the first bets of the pre-flop round
+    baseGameState.bets.forEach((blind) {
+      currentStreetBets[blind.seat] = blind.amount;
+    });
+
+    for (final currentAction in activeActions) {
+      if (currentAction.type == parser.ActionType.dealFlop || currentAction.type == parser.ActionType.dealTurn || currentAction.type == parser.ActionType.dealRiver) {
+        // End of a street, collect bets into the pot
+        accumulatedPot += currentStreetBets.values.fold(0, (a, b) => a + b);
+        currentStreetBets.clear();
+
+        if (currentAction.type == parser.ActionType.dealFlop) {
+          visibleCommunityCards = baseGameState.communityCards.take(3).toList();
+        } else if (currentAction.type == parser.ActionType.dealTurn) {
+          visibleCommunityCards = baseGameState.communityCards.take(4).toList();
+        } else if (currentAction.type == parser.ActionType.dealRiver) {
+          visibleCommunityCards = baseGameState.communityCards.take(5).toList();
+        }
+      } else if (currentAction.type == parser.ActionType.call || currentAction.type == parser.ActionType.raise || currentAction.type == parser.ActionType.bet) {
+        final player = baseGameState.players.firstWhere((p) => p.name == currentAction.playerName);
+        currentStreetBets[player.seat] = currentAction.amount;
+      }
+    }
+
     final updatedPlayers = baseGameState.players.map((p) {
-      return Player(
+      return parser.Player(
         seat: p.seat,
         name: p.name,
         stack: p.stack,
@@ -87,21 +117,20 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
       );
     }).toList();
 
-    final currentBets = List<Bet>.from(baseGameState.bets);
-    for (final action in activeActions) {
-      if ((action.type == ActionType.call || action.type == ActionType.raise || action.type == ActionType.bet) && action.amount > 0) {
-        final player = updatedPlayers.firstWhere((p) => p.name == action.playerName);
-        currentBets.add(Bet(seat: player.seat, amount: action.amount));
-      }
-    }
+    final currentBetsOnTable = currentStreetBets.entries.map((e) => parser.Bet(seat: e.key, amount: e.value)).toList();
+    final totalPotOnTable = accumulatedPot + currentStreetBets.values.fold(0, (a, b) => a + b);
+    final pots = totalPotOnTable > 0 ? [parser.Pot(amount: totalPotOnTable as int)] : <parser.Pot>[];
 
     setState(() {
-      _currentGameState = GameState(
+      _currentGameState = parser.GameState(
         gameId: baseGameState.gameId,
         players: updatedPlayers,
         buttonSeat: baseGameState.buttonSeat,
-        bets: currentBets,
+        // Only show bets for the current street on the table
+        bets: currentBetsOnTable,
         actions: baseGameState.actions,
+        pots: pots,
+        communityCards: visibleCommunityCards,
       );
     });
   }
@@ -154,13 +183,15 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
                   final screenHeight = MediaQuery.of(context).size.height;
                   return ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxHeight: screenHeight * 0.4,
+                      maxHeight: screenHeight * 0.7,
                     ),
                     child: GameBoardWidget(
                         gameId: _currentGameState?.gameId,
                         buttonSeat: _currentGameState?.buttonSeat,
                         players: _currentGameState?.players,
-                        bets: _currentGameState?.bets),
+                        bets: _currentGameState?.bets,
+                        pots: _currentGameState?.pots,
+                        communityCards: _currentGameState?.communityCards),
                   );
                 }),
                 const Divider(height: 1),
@@ -192,13 +223,6 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
                         label: const Text('Next Hand'),
                       ),
                     ],
-                  ),
-                ),
-                const Divider(height: 1),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(_handHistoryText!), // This part will be scrollable
                   ),
                 ),
               ],

@@ -55,6 +55,7 @@ class GameBoardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return LayoutBuilder(
       builder: (context, constraints) {
         // Determine the size of the table while respecting the aspect ratio and available space.

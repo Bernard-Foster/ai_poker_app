@@ -28,7 +28,7 @@ class Bet {
   }
 }
 
-enum ActionType { fold, check, call, bet, raise, dealFlop, dealTurn, dealRiver, uncalledBet, showCards }
+enum ActionType { fold, check, call, bet, raise, dealFlop, dealTurn, dealRiver, uncalledBet, showCards, winsPot }
 
 class Action {
   final String playerName;
@@ -108,6 +108,14 @@ class HandHistoryParser {
         // Ensure we only process chunks that actually start with the required pattern.
         .where((s) => handStartRegex.hasMatch(s.trimLeft()))
         .toList();
+
+    // Log the parsed hands for debugging purposes
+    print('--- Parsed Hand Histories (Total: $handCount) ---');
+    for (int i = 0; i < _handHistories.length; i++) {
+      print('--- HAND INDEX $i ---');
+      print(_handHistories[i].trim());
+      print('--- END HAND INDEX $i ---');
+    }
   }
 
   int get handCount => _handHistories.length;
@@ -214,6 +222,7 @@ class HandHistoryParser {
     final dealRegex = RegExp(r'\*\* Dealing (Flop|Turn|River) \*\* \[ (.*) \]');
     final uncalledBetRegex = RegExp(r'^(.*?) is returned (\d+) Tournament chips \(uncalled\)\.');
     final showsCardsRegex = RegExp(r'^(.*?) shows \[ (.*) \]');
+    final winsPotRegex = RegExp(r'^(.*?) wins (?:main|side) pot(?: #\d+)? (\d+) Tournament chips');
 
     for (final line in actionLines) {
       final trimmedLine = line.trim();
@@ -221,6 +230,7 @@ class HandHistoryParser {
       final dealMatch = dealRegex.firstMatch(trimmedLine);
       final uncalledBetMatch = uncalledBetRegex.firstMatch(trimmedLine);
       final showsCardsMatch = showsCardsRegex.firstMatch(trimmedLine);
+      final winsPotMatch = winsPotRegex.firstMatch(trimmedLine);
 
       if (dealMatch != null) {
         final street = dealMatch.group(1)!;
@@ -244,6 +254,15 @@ class HandHistoryParser {
           type: ActionType.showCards,
           cards: cardStrings.map((cs) => Card.fromString(cs)).toList(),
         ));
+      } else if (winsPotMatch != null) {
+        final playerName = winsPotMatch.group(1)!;
+        final amount = int.parse(winsPotMatch.group(2)!);
+        print('[Winner Parsed]: Player "$playerName" won pot of $amount. Line: "$trimmedLine"');
+        actions.add(Action(
+          playerName: playerName,
+          type: ActionType.winsPot,
+          amount: amount,
+        ));
       } else if (actionMatch != null) {
         final playerName = actionMatch.group(1)!;
         final actionString = actionMatch.group(2) ?? actionMatch.group(3)!;
@@ -262,6 +281,10 @@ class HandHistoryParser {
             type: type,
             amount: amountString != null ? int.parse(amountString) : 0,
           ));
+        }
+      } else {
+        if (trimmedLine.isNotEmpty) {
+          // print('[Unhandled Line]: $trimmedLine');
         }
       }
     }

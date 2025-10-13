@@ -131,6 +131,16 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
         final player = baseGameState.players.firstWhere((p) => p.name == currentAction.playerName);
         // Subtract the returned amount from the player's bet for this street
         currentStreetBets.update(player.seat, (value) => value - currentAction.amount, ifAbsent: () => 0);
+      } else if (currentAction.type == parser.ActionType.winsPot) {
+        final winningPlayer = playerMap[currentAction.playerName];
+        if (winningPlayer != null) {
+          playerMap[currentAction.playerName] = parser.Player(
+              seat: winningPlayer.seat,
+              name: winningPlayer.name,
+              stack: winningPlayer.stack + currentAction.amount, // Add winnings to stack
+              holeCards: winningPlayer.holeCards,
+              isActive: winningPlayer.isActive);
+        }
       }
     }
 
@@ -145,8 +155,17 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
     }).toList();
 
     final currentBetsOnTable = currentStreetBets.entries.map((e) => parser.Bet(seat: e.key, amount: e.value)).toList();
-    final totalPotOnTable = accumulatedPot + currentStreetBets.values.fold(0, (a, b) => a + b);
-    final pots = totalPotOnTable > 0 ? [parser.Pot(amount: totalPotOnTable as int)] : <parser.Pot>[];
+    
+    // Calculate the pot on the table *before* distribution
+    int potBeforeDistribution = accumulatedPot + currentStreetBets.values.fold(0, (a, b) => a + b);
+
+    // Subtract any winnings that have been distributed in the current set of actions
+    final winningsDistributed = activeActions
+        .where((a) => a.type == parser.ActionType.winsPot)
+        .fold<int>(0, (sum, action) => sum + action.amount);
+
+    final potOnTableAfterDistribution = potBeforeDistribution - winningsDistributed;
+    final pots = potOnTableAfterDistribution > 0 ? [parser.Pot(amount: potOnTableAfterDistribution)] : <parser.Pot>[];
 
     setState(() {
       _currentGameState = parser.GameState(
@@ -173,7 +192,7 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
 
       // Set the info for the billboard, but only for player actions (not dealing cards)
       if (lastAction.playerName.isNotEmpty) {
-        _lastActionInfo = _LastActionInfo(lastAction.playerName, lastAction.type);
+        _lastActionInfo = _LastActionInfo(lastAction.playerName, lastAction.type as parser.ActionType);
 
         // Set a timer to clear the billboard after 1 second
         _actionBillboardTimer = Timer(const Duration(seconds: 1), () {

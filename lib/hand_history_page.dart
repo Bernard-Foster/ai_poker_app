@@ -72,6 +72,7 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
   }
 
   void _updateGameState() {
+    print('Updating game state for hand index: $_currentHandIndex, action index: $_currentActionIndex');
     if (_parser == null) return;
 
     final baseGameState = _parser!.parseHand(_currentHandIndex);
@@ -218,6 +219,7 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
 
     setState(() {
       _currentActionIndex--;
+      print('Prev Move: new index $_currentActionIndex');
       _lastActionInfo = null; // Clear billboard when going backwards
       _updateGameState();
     });
@@ -225,6 +227,29 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final canGoToPrevHand = _parser != null && _currentHandIndex > 0;
+    final canGoToNextHand = _parser != null && _currentHandIndex < _parser!.handCount - 1;
+
+    void _prevHand() {
+      if (!canGoToPrevHand) return;
+      setState(() {
+        _currentHandIndex--;
+        _currentActionIndex = -1;
+        _lastActionInfo = null;
+        _updateGameState();
+      });
+    }
+
+    void _nextHand() {
+      if (!canGoToNextHand) return;
+      setState(() {
+        _currentHandIndex++;
+        _currentActionIndex = -1;
+        _lastActionInfo = null;
+        _updateGameState();
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -276,7 +301,7 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
                     runSpacing: 8.0,
                     children: [
                       ElevatedButton.icon(
-                        onPressed: null, // TODO: Implement
+                        onPressed: canGoToPrevHand ? _prevHand : null,
                         icon: const Icon(Icons.skip_previous),
                         label: const Text('Last Hand'),
                       ),
@@ -290,8 +315,8 @@ class _HandHistoryPageState extends State<HandHistoryPage> {
                         icon: const Icon(Icons.fast_forward),
                         label: const Text('Next Move'),
                       ),
-                      ElevatedButton.icon( // TODO: Implement
-                        onPressed: null,
+                      ElevatedButton.icon(
+                        onPressed: canGoToNextHand ? _nextHand : null,
                         icon: const Icon(Icons.skip_next),
                         label: const Text('Next Hand'),
                       ),

@@ -58,5 +58,40 @@ def equity_route():
         print(f"An error occurred: {e}")
         return jsonify(error=str(e)), 500
 
+@app.route('/deal', methods=['POST'])
+def deal_hands():
+    """
+    Shuffles a deck and deals hands to a number of players using pokerkit.
+    Expects a JSON body with {'num_players': N}
+    """
+    try:
+        data = request.get_json(force=True)
+        if not data or 'num_players' not in data:
+            return jsonify({'error': 'Missing num_players in request body'}), 400
+
+        num_players = int(data.get('num_players', 2))
+
+        if not 2 <= num_players <= 9:
+            return jsonify({'error': 'Number of players must be between 2 and 9'}), 400
+
+        # Create a new, shuffled, standard 52-card deck for each request.
+        deck = Deck(Deck.standard())
+        hands = []
+
+        for i in range(num_players):
+            dealt_cards = deck.deal(2)
+            card_strings = [str(card) for card in dealt_cards]
+            
+            hands.append({
+                'seat': i,
+                'name': f'Player {i+1}',
+                'stack': 1500,  # Default stack
+                'cards': card_strings
+            })
+        return jsonify({'players': hands})
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return jsonify(error=str(e)), 500
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)

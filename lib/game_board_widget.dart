@@ -317,48 +317,46 @@ class GameBoardWidget extends StatelessWidget {
           );
         }
 
-        return Center(
-          child: Container(
-            width: totalWidth,
-            height: totalHeight,
-            margin: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Transform.translate(
-              offset: const Offset(0, -6), // Apply a 6px upward offset
-              child: Stack(
-                children: [
-                  // The table itself
-                  Center(
-                    child: Container(
-                      width: tableWidth,
-                      height: tableHeight,
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade800,
-                        borderRadius: BorderRadius.circular(tableHeight / 2), // Oval shape
-                        border: Border.all(color: Colors.brown.shade800, width: 10),
-                      ),
-                      child: gameId != null
-                        ? Align(
-                            alignment: const Alignment(0.0, 0.6), // Positioned in the bottom third
-                            child: Text(
-                              gameId!,
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.6),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                ),
-                              ),
-                            )
-                          : null,
+        return Container(
+          width: totalWidth,
+          height: totalHeight,
+          margin: const EdgeInsets.symmetric(vertical: 10.0),
+          child: Transform.translate(
+            offset: const Offset(0, -6), // Apply a 6px upward offset
+            child: Stack(
+              children: [
+                // The table itself
+                Center(
+                  child: Container(
+                    width: tableWidth,
+                    height: tableHeight,
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade800,
+                      borderRadius: BorderRadius.circular(tableHeight / 2), // Oval shape
+                      border: Border.all(color: Colors.brown.shade800, width: 10),
                     ),
+                    child: gameId != null
+                      ? Align(
+                          alignment: const Alignment(0.0, 0.6), // Positioned in the bottom third
+                          child: Text(
+                            gameId!,
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.6),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              ),
+                            ),
+                          )
+                        : null,
                   ),
-                  // The player seats overlaid on the table
-                  ...playerSeats,
-                  ...dealerButton,
-                  ...betWidgets,
-                  ...communityCardWidgets,
-                  ...potWidgets,
-                ],
-              ),
+                ),
+                // The player seats overlaid on the table
+                ...playerSeats,
+                ...dealerButton,
+                ...betWidgets,
+                ...communityCardWidgets,
+                ...potWidgets,
+              ],
             ),
           ),
         );

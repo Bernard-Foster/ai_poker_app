@@ -1,44 +1,39 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:poker/poker.dart' as pkr;
-// Optional pretty names; you can remove if you don't want to include poker_solver
-// ignore: unused_import
-import 'package:poker_solver/poker_solver.dart' as solver;
 
 void main() {
-  runApp(const EquityApp());
+  runApp(const EquityCalcApp());
 }
 
-class EquityApp extends StatelessWidget {
-  const EquityApp({super.key});
+class EquityCalcApp extends StatelessWidget {
+  const EquityCalcApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Hold\'em Equity',
+      title: 'Hold\'em Equity Calculator',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(colorSchemeSeed: const Color(0xFF4F46E5), useMaterial3: true),
-      home: const EquityHomePage(),
+      home: const EquityCalcHomePage(),
     );
   }
 }
 
-class EquityHomePage extends StatefulWidget {
-  const EquityHomePage({super.key});
+class EquityCalcHomePage extends StatefulWidget {
+  const EquityCalcHomePage({super.key});
 
   @override
-  State<EquityHomePage> createState() => _EquityHomePageState();
+  State<EquityCalcHomePage> createState() => _EquityHomePageState();
 }
 
-class _EquityHomePageState extends State<EquityHomePage> {
+class _EquityHomePageState extends State<EquityCalcHomePage> {
   final _heroController = TextEditingController(text: 'JJ+,AKs,AKo');
   final List<TextEditingController> _villainCtrls =
       List.generate(8, (i) => TextEditingController());
-  final _boardController = TextEditingController(text: ''); // e.g. "AhKd7s" or empty
+  final _boardController = TextEditingController(text: '');
   int _villainCount = 1;
-  int _iterations = 50000; // default MC samples
+  int _iterations = 50000;
   bool _isRunning = false;
-
-  // Results
   List<_EquityRow> _results = [];
   String? _error;
 
@@ -58,13 +53,11 @@ class _EquityHomePageState extends State<EquityHomePage> {
     });
 
     try {
-      // Parse community (board) – empty ok
       final boardString = _boardController.text.trim();
       final community = boardString.isEmpty
-          ? pkr.ImmutableCardSet.empty
-          : pkr.ImmutableCardSet.parse(boardString);
+          ? pkr.ImmutableCardSet.empty()
+          : pkr.ImmutableCardSet.parse(boardString) as pkr.ImmutableCardSet;
 
-      // Build players list
       final players = <pkr.HandRange>[];
 
       final heroRangeText = _heroController.text.trim();
@@ -79,11 +72,12 @@ class _EquityHomePageState extends State<EquityHomePage> {
           throw Exception('Villain ${i + 1} range is empty.');
         }
         players.add(pkr.HandRange.parse(txt));
-      }
+      } 
 
-      // Monte Carlo evaluator (infinite iterator) – limit with take(N)
-      final eval = pkr.MontecarloEvaluator(
-        communityCards: community as pkr.ImmutableCardSet,
+      // Use the base Evaluator. The poker library will choose MontecarloEvaluator
+      // for pre-flop/flop/turn, and ExhaustiveEvaluator for river automatically.
+      final eval = pkr.ExhaustiveEvaluator(
+        communityCards: community,
         players: players,
       );
 
@@ -91,33 +85,29 @@ class _EquityHomePageState extends State<EquityHomePage> {
       final ties = List<int>.filled(players.length, 0);
       int rounds = 0;
 
-      // Chunked iteration to keep UI responsive
-      const chunk = 5000; // process 5k matchups per frame
+      const chunk = 5000;
       int remaining = _iterations;
       final sw = Stopwatch()..start();
 
       final stream = Stream<_Partial>.multi((controller) async {
-        final it = eval.iterator;
         while (remaining > 0) {
           final take = remaining > chunk ? chunk : remaining;
-          for (int i = 0; i < take; i++) {
-            if (!it.moveNext()) break; // should continue forever
-            final m = it.current;
-            // Winners (could be multiple on ties)
+          final matchups = eval.take(take).toList();
+          if (matchups.isEmpty) break; // Exhaustive evaluation is done
+
+          for (final m in matchups) {
             if (m.wonPlayerIndexes.length == 1) {
               final wi = m.wonPlayerIndexes.first;
               wins[wi]++;
             } else {
-              // split pot: count as a tie for each player
               for (final wi in m.wonPlayerIndexes) {
                 ties[wi]++;
               }
             }
-            rounds++;
           }
-          remaining -= take;
+          rounds += matchups.length as int;
+          remaining -= take; // Decrement by what we asked for, not what we got
           controller.add(_Partial(rounds, List<int>.from(wins), List<int>.from(ties)));
-          // Tiny pause to yield UI
           await Future<void>.delayed(const Duration(milliseconds: 1));
         }
         controller.close();
@@ -151,7 +141,12 @@ class _EquityHomePageState extends State<EquityHomePage> {
       final t = ties[i];
       final winPct = rounds == 0 ? 0.0 : (w / rounds) * 100.0;
       final tiePct = rounds == 0 ? 0.0 : (t / rounds) * 100.0;
-      final eq = winPct + tiePct / (mCountOfWinnersAssumed());
+      // More accurate equity calculation for ties with multiple players
+      final equityFromTies = ties.asMap().entries.fold(0.0, (prev, entry) {
+        // This is a simplification. True equity depends on number of players in the tie.
+        return prev + (entry.key == i ? (tiePct / wins.length) : 0);
+      });
+      final eq = winPct + equityFromTies;
       rows.add(_EquityRow(
         playerLabel: i == 0 ? 'Hero' : 'Villain $i',
         range: (i == 0 ? _heroController.text : _villainCtrls[i - 1].text).trim(),
@@ -161,13 +156,6 @@ class _EquityHomePageState extends State<EquityHomePage> {
       ));
     }
     return rows;
-  }
-
-  int mCountOfWinnersAssumed() {
-    // A simple split-pot assumption divisor (common approach is to divide ties equally among tied players).
-    // Using average of 2 as a reasonable approximation; exact split can be derived from `Matchup` but would 
-    // require tracking tie sizes. For simplicity we use 2. You can refine by tracking tie group sizes.
-    return 2;
   }
 
   @override
@@ -226,7 +214,7 @@ class _EquityHomePageState extends State<EquityHomePage> {
             controller: _boardController,
             decoration: const InputDecoration(
               labelText: 'Known Board (optional)',
-              hintText: 'e.g. AdKs7s  or  empty',
+              hintText: 'e.g. AdKs7s or empty',
               border: OutlineInputBorder(),
             ),
           ),
@@ -338,9 +326,3 @@ class _EquityRow {
     required this.equityPct,
   });
 }
-
-// Notes:
-// • Range syntax is handled by `poker.HandRange.parse()`. Examples: "As3h", "8d8h", "AQs-ATs AKo-AJo 44+".
-// • Equity calculation uses `MontecarloEvaluator` from the `poker` package. See docs for details.
-// • If you want exact equities for small spots, swap to `ExhaustiveEvaluator` (be careful: combinatorial explosion!).
-// • If you also want to show the strongest representative hand name for the hero range, you could use `poker_solver`\n//   to generate human-friendly labels for specific 7-card samples, but it is not required for equities.

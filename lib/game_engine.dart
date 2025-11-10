@@ -33,15 +33,18 @@ class GameEngine {
   final int playerCount;
   final Deck _deck;
   final List<List<pkr.Card>> _holeCards;
+  final List<int> _playerStacks;
   int buttonPosition;
 
   List<List<pkr.Card>> get holeCards => _holeCards;
+  List<int> get playerStacks => _playerStacks;
   int get smallBlindPosition => (buttonPosition + 1) % playerCount;
   int get bigBlindPosition => (buttonPosition + 2) % playerCount;
 
-  GameEngine({required this.playerCount, this.buttonPosition = 0})
+  GameEngine({required this.playerCount, this.buttonPosition = 0, required int startingStack})
       : _deck = Deck(),
-        _holeCards = List.generate(playerCount, (_) => []);
+        _holeCards = List.generate(playerCount, (_) => []),
+        _playerStacks = List.generate(playerCount, (_) => startingStack);
 
   /// Moves the button to the next player.
   void advanceButton() {

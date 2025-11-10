@@ -39,7 +39,11 @@ class _GameTablePageState extends State<GameTablePage> {
         nextButtonPosition = (_gameEngine!.buttonPosition + 1) % _seats;
       }
       // Always create a new GameEngine for a new hand to get a fresh deck
-      _gameEngine = GameEngine(playerCount: _seats, buttonPosition: nextButtonPosition);
+      _gameEngine = GameEngine(
+        playerCount: _seats,
+        buttonPosition: nextButtonPosition,
+        startingStack: 1000,
+      );
       _gameEngine!.dealPreFlop(); // This will shuffle and deal from a fresh deck
 
       // Update the UI models with the dealt cards
@@ -164,7 +168,11 @@ class _GameTablePageState extends State<GameTablePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Player ${m.index + 1}', style: Theme.of(context).textTheme.labelLarge),
+            Text('Player ${m.index + 1}',
+                style: Theme.of(context).textTheme.labelLarge),
+            if (_gameEngine != null)
+              Text('Stack: ${_gameEngine!.playerStacks[m.index]}',
+                  style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

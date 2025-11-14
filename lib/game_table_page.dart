@@ -13,7 +13,6 @@ class GameTablePage extends StatefulWidget {
 
 class _GameTablePageState extends State<GameTablePage> {
   int _seats = 6; // adjustable 2–9
-  final List<String?> _board = List<String?>.filled(5, null);
   late List<_SeatModel> _players;
   GameEngine? _gameEngine;
 
@@ -27,7 +26,6 @@ class _GameTablePageState extends State<GameTablePage> {
     setState(() {
       _seats = v.clamp(2, 9);
       _players = List.generate(_seats, (i) => _SeatModel(index: i));
-      _gameEngine = null; // Reset game on seat change
     });
   }
 
@@ -45,12 +43,20 @@ class _GameTablePageState extends State<GameTablePage> {
         startingStack: 1000,
       );
       _gameEngine!.dealPreFlop(); // This will shuffle and deal from a fresh deck
+      _gameEngine!.postBlinds();
 
       // Update the UI models with the dealt cards
       for (int i = 0; i < _seats; i++) {
         _players[i].cardA = _gameEngine!.holeCards[i][0].toString();
         _players[i].cardB = _gameEngine!.holeCards[i][1].toString();
       }
+    });
+  }
+
+  void _dealFlop() {
+    if (_gameEngine == null) return;
+    setState(() {
+      _gameEngine!.dealFlop();
     });
   }
 
@@ -64,8 +70,6 @@ class _GameTablePageState extends State<GameTablePage> {
             tooltip: 'New Layout',
             onPressed: () {
               setState(() {
-                // reset only visuals for now
-                for (var i = 0; i < _board.length; i++) _board[i] = null;
                 for (final p in _players) {
                   p.cardA = null;
                   p.cardB = null;
@@ -115,6 +119,20 @@ class _GameTablePageState extends State<GameTablePage> {
                   child: _seatCard(context, _players[i]),
                 );
               }),
+              
+              // Player Bets
+              if (_gameEngine != null)
+                ...List.generate(_seats, (i) {
+                  if (_gameEngine!.bets[i] == 0) return const SizedBox.shrink();
+
+                  final angle = _seatAngle(i, _seats) + (10 * (math.pi / 180.0));
+                  final pos = _polar(center, radius * 0.65, angle);
+                  return Positioned(
+                    left: pos.dx - 20,
+                    top: pos.dy - 15,
+                    child: _betIndicator(_gameEngine!.bets[i]),
+                  );
+                }),
 
               // Top control bar
               Positioned(
@@ -136,15 +154,20 @@ class _GameTablePageState extends State<GameTablePage> {
       elevation: 0,
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: List.generate(
             5,
-            (i) => Padding(
-              padding: EdgeInsets.only(right: i == 4 ? 0 : 8),
-              child: _cardChip(_board[i], dimIfNull: true),
-            ),
+            (i) {
+              final card = _gameEngine != null && i < _gameEngine!.communityCards.length
+                  ? _gameEngine!.communityCards[i].toString()
+                  : null;
+              return Padding(
+                padding: EdgeInsets.only(right: i == 4 ? 0 : 8),
+                child: _cardChip(card, dimIfNull: true),
+              );
+            },
           ),
         ),
       ),
@@ -200,6 +223,17 @@ class _GameTablePageState extends State<GameTablePage> {
     );
   }
 
+  /// The action buttons (Fold, Call, Bet) for the current player.
+  Widget _playerActionControls() {
+    return Wrap(
+      spacing: 8,
+      children: [
+        ElevatedButton(onPressed: () => setState(() => _gameEngine!.playerFolds()), child: const Text('Fold')),
+        ElevatedButton(onPressed: () => setState(() => _gameEngine!.playerCalls()), child: Text('Call ${_gameEngine!.currentBetToCall}')),
+        ElevatedButton(onPressed: () => setState(() => _gameEngine!.playerBets(10)), child: const Text('Bet 10')),
+      ],);
+  }
+
   /// Bottom controls: seat count and placeholders for later (deal, etc.)
   Widget _controlBar(BuildContext context) {
     return Card(
@@ -212,16 +246,20 @@ class _GameTablePageState extends State<GameTablePage> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             const Text('Players:'),
+            // Disable seat changes while a hand is in progress
             DropdownButton<int>(
               value: _seats,
               items: [2, 3, 4, 5, 6, 7, 8, 9]
                   .map((v) => DropdownMenuItem(value: v, child: Text('$v')))
                   .toList(),
-              onChanged: (v) => _setSeats(v ?? _seats),
+              onChanged: _gameEngine == null ? (v) => _setSeats(v ?? _seats) : null,
             ),
             const VerticalDivider(width: 24),
             FilledButton.tonal(onPressed: _deal, child: const Text('Deal')),
-            FilledButton.tonal(onPressed: null, child: const Text('Flop')),
+            FilledButton.tonal(
+              onPressed: _gameEngine?.isBettingRoundOver == true ? _dealFlop : null,
+              child: const Text('Flop'),
+            ),
             FilledButton.tonal(onPressed: null, child: const Text('Turn')),
             FilledButton.tonal(onPressed: null, child: const Text('River')),
             FilledButton.icon(
@@ -229,6 +267,12 @@ class _GameTablePageState extends State<GameTablePage> {
               icon: const Icon(Icons.emoji_events_outlined),
               label: const Text('Showdown'),
             ),
+            if (_gameEngine != null) ...[
+              const VerticalDivider(width: 24),
+              Text('Player ${_gameEngine!.currentPlayerIndex + 1}\'s Turn:', style: Theme.of(context).textTheme.labelLarge),
+              const SizedBox(width: 8),
+              _playerActionControls(),
+            ]
           ],
         ),
       ),
@@ -277,6 +321,33 @@ class _GameTablePageState extends State<GameTablePage> {
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
         ),
       ),
+    );
+  }
+
+  /// A simple widget to show a player's bet amount.
+  Widget _betIndicator(int amount) {
+    return Column(
+      children: [
+        Container(
+          height: 20,
+          width: 20,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.amber.shade700,
+            border: Border.all(color: Colors.black54),
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          amount.toString(),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            shadows: [Shadow(blurRadius: 2, color: Colors.black87)],
+          ),
+        ),
+      ],
     );
   }
 

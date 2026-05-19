@@ -75,10 +75,6 @@ class GameEngine {
   List<List<pkr.Card>> get holeCards => _holeCards;
   List<int> get stacks => _stacks;
   List<bool> get folded => _folded;
-  List<int> get bets => _bets;
-  int get pot => _pot;
-  
-
 
   int get sbPos => (button + 1) % playerCount;
   int get bbPos => (button + 2) % playerCount;

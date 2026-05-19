@@ -32,27 +32,103 @@ class _GameTablePageState extends State<GameTablePage> {
   }
 
   void _deal() {
-    setState(() {
-      int nextButtonPosition = 0;
-      if (_gameEngine != null) {
-        // If a game engine already exists, advance the button from its current position
-        nextButtonPosition = (_gameEngine!.button + 1) % _seats;
-      }
-      // Always create a new GameEngine for a new hand to get a fresh deck
-      _gameEngine = GameEngine(
-        playerCount: _seats,
-        button: nextButtonPosition,
-        startingStack: 1000,
-      );
-      _gameEngine!.dealPreFlop(); // This will shuffle and deal from a fresh deck
+  setState(() {
+    int nextButtonPosition = 0;
+    if (_gameEngine != null) {
+      // If a game engine already exists, advance the button from its current position
+      nextButtonPosition = (_gameEngine!.button + 1) % _seats;
+    }
+    // Always create a new GameEngine for a new hand to get a fresh deck
+    _gameEngine = GameEngine(
+      playerCount: _seats,
+      button: nextButtonPosition,
+      startingStack: 1000,
+    );
+    _gameEngine!.dealPreFlop(); // This will shuffle and deal from a fresh deck
+    _gameEngine!.postBlinds();  // Post blinds at the start of each hand
 
-      // Update the UI models with the dealt cards
-      for (int i = 0; i < _seats; i++) {
-        _players[i].cardA = _gameEngine!.holeCards[i][0].toString();
-        _players[i].cardB = _gameEngine!.holeCards[i][1].toString();
-      }
-    });
-  }
+    // Update the UI models with the dealt cards
+    for (int i = 0; i < _seats; i++) {
+      _players[i].cardA = _gameEngine!.holeCards[i][0].toString();
+      _players[i].cardB = _gameEngine!.holeCards[i][1].toString();
+    }
+  });
+}
+
+Widget _simpleBettingUI(BuildContext context) {
+  final ge = _gameEngine!;
+  final callAmount = ge.currentBetToCall - ge.bets[0];
+  final canRaise = ge.stacks[0] > callAmount && ge.stacks[0] > ge.minRaise;
+  final TextEditingController _raiseController = TextEditingController(text: ge.minRaise.toString());
+  return Card(
+    elevation: 8,
+    color: Colors.white,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                ge.fold();
+              });
+            },
+            child: const Text('Fold'),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: callAmount > 0 && ge.stacks[0] > 0
+                ? () {
+                    setState(() {
+                      ge.call();
+                    });
+                  }
+                : null,
+            child: Text(callAmount > 0 ? 'Call (\$${callAmount})' : 'Check'),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 60,
+            child: TextField(
+              controller: _raiseController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Raise'),
+              enabled: canRaise,
+            ),
+          ),
+          const SizedBox(width: 4),
+          ElevatedButton(
+            onPressed: canRaise
+                ? () {
+                    final amt = int.tryParse(_raiseController.text) ?? ge.minRaise;
+                    setState(() {
+                      ge.bet(amt);
+                    });
+                  }
+                : null,
+            child: const Text('Raise'),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: ge.stacks[0] > 0
+                ? () {
+                    setState(() {
+                      ge.bet(ge.stacks[0]);
+                    });
+                  }
+                : null,
+            child: const Text('All-in'),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +199,12 @@ class _GameTablePageState extends State<GameTablePage> {
                 bottom: 16,
                 child: _controlBar(context),
               ),
+              if (_gameEngine != null && !_gameEngine!.bettingDone && _gameEngine!.currentPlayer == 0)
+                Positioned(
+                  right: 16,
+                  bottom: 24,
+                  child: _simpleBettingUI(context),
+                ),
             ],
           );
         },

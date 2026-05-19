@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poker_app/chip_widget.dart' as custom;
+import 'package:poker_app/features/chips/chip_widget.dart' as custom;
 
 class ChipStackWidget extends StatelessWidget {
   final int amount;

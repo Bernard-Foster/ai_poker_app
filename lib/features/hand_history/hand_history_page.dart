@@ -4,8 +4,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:file_picker/file_picker.dart';
-import 'package:poker_app/hand_history_parser.dart' as parser;
-import 'package:poker_app/game_board_widget.dart';
+import 'package:poker_app/features/hand_history/hand_history_parser.dart' as parser;
+import 'package:poker_app/widgets/game_board_widget.dart';
 
 class HandHistoryPage extends StatefulWidget {
   const HandHistoryPage({super.key, required this.title});

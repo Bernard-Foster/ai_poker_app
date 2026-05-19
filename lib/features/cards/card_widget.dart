@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' hide Card;
-import 'package:poker_app/poker_card.dart';
+import 'package:poker_app/features/cards/poker_card.dart';
 
 class CardWidget extends StatelessWidget {
   final Card? card;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:poker_app/equity_calculator_page.dart';
-import 'game_table_page.dart';
+import 'package:poker_app/features/equity/equity_calculator_page.dart';
+import 'features/table/game_table_page.dart';
 
 void main() {
   runApp(const PokerApp());

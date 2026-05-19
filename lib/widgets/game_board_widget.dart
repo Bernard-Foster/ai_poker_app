@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart' hide Card; // Needed to hide Card to avoid conflict with our Card class
-import 'package:poker_app/hand_history_parser.dart' as parser;
-import 'package:poker_app/poker_card.dart';
-import 'package:poker_app/card_widget.dart';
-import 'package:poker_app/chip_stack_widget.dart';
+import 'package:poker_app/features/hand_history/hand_history_parser.dart' as parser;
+import 'package:poker_app/features/cards/poker_card.dart';
+import 'package:poker_app/features/cards/card_widget.dart';
+import 'package:poker_app/features/chips/chip_stack_widget.dart';
 
 class GameBoardWidget extends StatelessWidget {
   final int playerCount;

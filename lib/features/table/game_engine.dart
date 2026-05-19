@@ -162,24 +162,47 @@ class GameEngine {
     if (!bettingDone) _nextPlayer();
   }
 
-  void bet(int amount) {
-    int diff = currentBetToCall - _bets[currentPlayer];
-    int total = diff + amount;
 
-    if (total >= _stacks[currentPlayer]) {
-      _bets[currentPlayer] += _stacks[currentPlayer];
-      _stacks[currentPlayer] = 0;
-    } else {
-      _bets[currentPlayer] += total;
-      _stacks[currentPlayer] -= total;
-    }
-
-    currentBetToCall = _bets[currentPlayer];
-    lastAggressor = currentPlayer;
-    bettingDone = false;
-
-    _nextPlayer();
+  int get minRaise {
+    // Minimum raise is the size of the previous raise, or BB if no raise yet
+    int lastRaise = currentBetToCall - (lastAggressor != null ? _bets[lastAggressor!] : 0);
+    return lastRaise > 0 ? lastRaise : bb;
   }
+
+
+
+
+  void bet(int amount) {
+  int diff = currentBetToCall - _bets[currentPlayer];
+  int total = diff + amount;
+  int playerStack = _stacks[currentPlayer];
+
+  // All-in: player bets all remaining chips
+  if (total >= playerStack) {
+    _bets[currentPlayer] += playerStack;
+    _stacks[currentPlayer] = 0;
+    // If all-in is less than a call, treat as call; if more, treat as raise
+    if (playerStack > diff && playerStack - diff >= minRaise) {
+      currentBetToCall = _bets[currentPlayer];
+      lastAggressor = currentPlayer;
+    }
+  } else {
+    // Enforce minimum raise
+    if (amount < minRaise) {
+      // Not enough for a raise, treat as call
+      _stacks[currentPlayer] -= diff;
+      _bets[currentPlayer] += diff;
+    } else {
+      // Valid raise
+      _stacks[currentPlayer] -= total;
+      _bets[currentPlayer] += total;
+      currentBetToCall = _bets[currentPlayer];
+      lastAggressor = currentPlayer;
+    }
+  }
+  bettingDone = false;
+  _nextPlayer();
+}
 
   /// -------------------------------
   /// ROUND-END LOGIC
